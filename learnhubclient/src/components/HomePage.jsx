@@ -45,7 +45,7 @@ const HomePage = () => {
                 <div className="w-full text-center">
                     <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
                         <Footer.Brand
-                            href="#"
+                            href="/home"
                             src="./../../public/logo.svg"
                             alt="LearnHub Logo"
                             name="LearnHub"

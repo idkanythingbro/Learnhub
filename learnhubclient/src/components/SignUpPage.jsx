@@ -1,18 +1,21 @@
 import { DarkThemeToggle } from "flowbite-react";
+import { Link } from "react-router-dom";
+
+
 const SignUpPage = () => {
   return (
     <div>
         <nav className="bg-[#ffad33] shadow-2xl border-gray-200 dark:bg-gray-900">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
-          <a
-            href="#"
+          <Link
+            to="/home"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src="logo.svg" className="h-8" alt="Logo" />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
               LearnHub
             </span>
-          </a>
+          </Link>
           <div className="font-semibold text-md flex items-center space-x-3 rtl:space-x-reverse">
             <DarkThemeToggle className="" />
             <a
@@ -22,12 +25,12 @@ const SignUpPage = () => {
             >
               (+00) 412-1234
             </a>
-            <a
-              href="#"
+            <Link
+              to="/sign-in"
               className="text-blue-600 dark:text-blue-500 hover:underline"
             >
               Login
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -194,12 +197,12 @@ const SignUpPage = () => {
         </div>
         <p className="mb-2 text-gray-500 dark:text-gray-400">
         Already have an account?{" "}
-        <a
+        <Link
           className="text-sm text-blue-700 dark:text-slate-400 dark:underline"
-          href="#"
+          to="/sign-in"
         >
           SignIn
-        </a>
+        </Link>
       </p>
       </form>
       

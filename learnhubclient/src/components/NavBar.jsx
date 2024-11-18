@@ -2,28 +2,35 @@
 
 import { Button, DarkThemeToggle, Navbar, Dropdown, Avatar } from "flowbite-react"
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
     const [user, setUser] = useState(false);
-    // setUser(false);
-    if (user) {
+    
+    const navigate = useNavigate();
+
+    function signUp(){
+        navigate("/sign-up")
+    }
+
+    if (!user) {
         return (
             <Navbar fluid className="bg-[#ffad33] shadow-2xl">
-                <Navbar.Brand href="#">
+                <Navbar.Brand href="/home">
                     <img src="/logo.svg" className="mr-3 h-6 sm:h-9" alt="Logo" />
                     <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">LearnHub</span>
                 </Navbar.Brand>
                 <div className="flex md:order-2">
                     <DarkThemeToggle className="mr-5" />
-                    <Button>Get started</Button>
+                    <Button onClick={signUp}>Get started</Button>
                     <Navbar.Toggle />
                 </div>
 
                 <Navbar.Collapse>
                     <Navbar.Link href="#" active>
-                        Home
+                        Tutorials
                     </Navbar.Link>
-                    <Navbar.Link href="#">About</Navbar.Link>
+                    <Navbar.Link href="#">Exercises</Navbar.Link>
                     <Navbar.Link href="#">Services</Navbar.Link>
                     <Navbar.Link href="#">Pricing</Navbar.Link>
                     <Navbar.Link href="#">Contact</Navbar.Link>
@@ -61,9 +68,9 @@ const NavBar = () => {
                 </div>
                 <Navbar.Collapse>
                     <Navbar.Link href="#" active>
-                        Home
+                        Tutorials
                     </Navbar.Link>
-                    <Navbar.Link href="#">About</Navbar.Link>
+                    <Navbar.Link href="#">Exercises</Navbar.Link>
                     <Navbar.Link href="#">Services</Navbar.Link>
                     <Navbar.Link href="#">Pricing</Navbar.Link>
                     <Navbar.Link href="#">Contact</Navbar.Link>
