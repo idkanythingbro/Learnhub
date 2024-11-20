@@ -1,35 +1,36 @@
 "use client";
 import { Button, Checkbox, Label, List, DarkThemeToggle } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   return (
     <div>
       <nav className="bg-[#ffad33] shadow-2xl border-gray-200 dark:bg-gray-900">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src="logo.svg" className="h-8" alt="Logo" />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
               LearnHub
             </span>
-          </a>
+          </Link>
           <div className="font-semibold text-md flex items-center space-x-3 rtl:space-x-reverse">
             <DarkThemeToggle className="" />
-            <a
+            <Link
               //add telephone number here
-              href="tel:5541251234"
+              to="tel:5541251234"
               className="text-gray-500 dark:text-white hover:underline"
             >
               (+00) 412-1234
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/sign-up"
               className="text-blue-600 dark:text-blue-500 hover:underline"
             >
               Signup
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -90,12 +91,12 @@ const LoginPage = () => {
             <Button type="submit">Submit</Button>
             <p className="mb-2 text-gray-500 dark:text-gray-400">
               Don&apos;t have an account?{" "}
-              <a
+              <Link
                 className="text-sm text-blue-700 dark:text-slate-400 dark:underline"
-                href="#"
+                to="/sign-up"
               >
                 SignUp
-              </a>
+              </Link>
             </p>
           </form>
           <Label className="text-lg">Our Other Sign in Options</Label>
