@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import HomePage from "./components/HomePage";
-import ProfilePage from "./components/ProfilePage";
+import HomePage from "./components/pages/HomePage";
+import ProfilePage from "./components/pages/ProfilePage";
 
 function App() {
   const [user, setUser] = useState(true);

@@ -5,9 +5,9 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import HomePage from "./components/HomePage.jsx";
-import LoginPage from "./components/LoginPage.jsx";
-import SignUpPage from "./components/SignUpPage.jsx";
 import App from "./App.jsx";
+import LoginPage from "./components/pages/LoginPage.jsx";
+import SignUpPage from "./components/pages/SignUpPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",

@@ -22,8 +22,12 @@ const NavBar = ({ user }) => {
   if (!user) {
     return (
       <Navbar fluid className="bg-[#ffad33] shadow-2xl">
-        <Navbar.Brand href="/">
-          <img src="/logo.svg" className="mr-3 h-6 sm:h-9" alt="Logo" />
+        <Navbar.Brand className="" href="/">
+          <img
+            src="/logo.svg"
+            className="mr-3 h-6 sm:h-9 dark:bg-white rounded-full p-1"
+            alt="Logo"
+          />
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             LearnHub
           </span>

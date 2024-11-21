@@ -1,13 +1,13 @@
 "use client";
 
 import { Footer, List, Label } from "flowbite-react";
-import { Crousel } from "./Crousel";
-import NavBar from "./NavBar";
+import { Crousel } from "./../uicomponents/Crousel";
+import NavBar from "../uicomponents/NavBar";
 
-const HomePage = ({user}) => {
+const HomePage = ({ user }) => {
   return (
     <div className="">
-      <NavBar user={user}/>
+      <NavBar user={user} />
       <Crousel />
       <div className="flex w-screen flex-col items-center gap-2 border-b-2 bg-green-200 p-5 md:p-20 dark:bg-slate-700">
         <p className="mb-2 text-gray-500 dark:text-gray-400">
