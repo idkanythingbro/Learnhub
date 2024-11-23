@@ -68,61 +68,40 @@ const sendOtp = async (userId) => {
 
 // Register controller
 const registerUser = asyncHandler(async (req, res) => {
-    let { name, email, phoneNumber, password, role, experience, bio } = req.body;
-    let localFilePath = null;
-    if (req.file) {
-        const file = req.file;
-        localFilePath = file.path;
-        if (!isFileSizeValid(file.size, process.env.PROFILE_PHOTO_MAXIMUM_SIZE)) {
-            fs.unlinkSync(localFilePath)
-            throw new ApiError(400, `File size must be under ${process.env.PROFILE_PHOTO_MAXIMUM_SIZE}`)
-        }
-    }
+    let { firstname, lastname, email, phone, company, password, confirmpassword } = req.body;
     if (
-        !name || !email || !phoneNumber || !password
-        || !isEmailValid(email) || !isPhoneNumberValid(phoneNumber) || !isPasswordValid(password)
+        !firstname || !lastname || !email || !phone || !company || !password
+        || !isEmailValid(email) || !isPhoneNumberValid(phone) || !isPasswordValid(password)
     ) {
-        if (localFilePath) {
-            fs.unlinkSync(localFilePath)
-        }
         throw new ApiError(400, "Invalid input");
     }
-    const existingUser = await User.findOne({ $or: [{ email }, { phoneNumber }] });
-    if (existingUser) {
-        if (localFilePath) {
-            fs.unlinkSync(localFilePath)
-        }
-        throw new ApiError(400, "User already exists")
+    if (password !== confirmpassword) {
+        throw new ApiError(400, "Password and confirm password must be same")
     }
-    let avatar = "";
-    if (localFilePath) {
-        avatar = await uploadFileToCloudinary(localFilePath, "auto", "Profile photo");
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    if (existingUser) {
+        throw new ApiError(400, "User already exists")
     }
     let currentTime = Date.now().toString();
     let userName = email.split('@')[0] + currentTime.substring(currentTime.length - 2);
-    role = role || "other";
     const user = await User.create(
         {
-            name,
+            firstName: firstname,
+            lastName: lastname,
             userName,
             email,
-            phoneNumber,
+            phone,
+            company,
             password,
-            role,
-            experience,
-            bio,
-            avatar
         });
-
-    await sendOtp(user._id);
-
+    // await sendOtp(user._id);
     res.status(201).json(new ApiResponse(
         201,
         {
             id: user._id,
             userName: user.userName
         },
-        "Please verify your email address. OTP has been sent to your registered email"
+        "User registered successfully"
     ));
 })
 

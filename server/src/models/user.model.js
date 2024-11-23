@@ -6,9 +6,20 @@ const generateOtp = require("../utils/generatOtp");
 const Otp = require("./otp.models");
 
 const userSchema = new mongoose.Schema({
-    name: {
+    firstName: {
         type: String,
         required: true,
+        trim: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    company: {
+        type: String,
+        required: true,
+        trim: true,
     },
     userName: {
         type: String,
@@ -29,7 +40,7 @@ const userSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid email number!`
         },
     },
-    phoneNumber: {
+    phone: {
         type: String,
         required: true,
         unique: true,
@@ -52,45 +63,8 @@ const userSchema = new mongoose.Schema({
         type: String, // cloudinary url
         default: null
     },
-    role: {
-        type: String,
-        default: "other",
-        enum: ["tutor", "other"]
-    },
-    experience: {
-        type: String,
-        default: "0",
-    },
-    bio: {
-        type: String,
-        default: ""
-    },
-    collage: {
-        type: String,
-        default: null,
-    },
-    location: {
-        type: String,
-        default: null
-    },
-    socialLinks: {
-        github: {
-            type: String,
-            default: ""
-        },
-        linkedin: {
-            type: String,
-            default: ""
-        },
-        twitter: {
-            type: String,
-            default: ""
-        },
-        website: {
-            type: String,
-            default: ""
-        }
-    },
+
+
     post: {
         type: Number,
         default: 0
@@ -146,16 +120,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    isActive: {
-        type: Boolean,
-        default: false
-    },
-    otpId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Otp",
-        default: null
-    }
-
 }, {
     timestamps: true
 })

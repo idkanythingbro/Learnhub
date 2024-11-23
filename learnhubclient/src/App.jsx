@@ -1,19 +1,10 @@
-import { useState } from "react";
 import "./App.css";
-import HomePage from "./components/HomePage";
-import ProfilePage from "./components/ProfilePage";
+import Routing from "./components/Routing";
 
 function App() {
-  const [user, setUser] = useState(true);
-  if (user) {
-    return <ProfilePage user={user} />;
-  } else {
-    return (
-      <>
-        <HomePage user={user} />
-      </>
-    );
-  }
+  return (<>
+    <Routing />
+  </>)
 }
 
 export default App;

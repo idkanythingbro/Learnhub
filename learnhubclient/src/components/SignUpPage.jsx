@@ -1,7 +1,16 @@
 import { DarkThemeToggle } from "flowbite-react";
 import { Link } from "react-router-dom";
-
+import { registerUser } from "../service/user.service";
+import {useDispatch} from 'react-redux';
 const SignUpPage = () => {
+const dispatch = useDispatch();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    // console.log(data);
+    dispatch(registerUser(data));
+  }
   return (
     <div>
       <nav className="bg-[#ffad33] shadow-2xl border-gray-200 dark:bg-gray-900">
@@ -34,7 +43,7 @@ const SignUpPage = () => {
         </div>
       </nav>
       <div className="flex justify-center items-center dark:bg-slate-700 h-screen">
-        <form className="w-screen p-2 md:w-1/2 border-2 border-[#ffad33] md:p-10 md:m-5 rounded-lg dark:bg-slate-700">
+        <form onSubmit={handleSubmit} className="w-screen p-2 md:w-1/2 border-2 border-[#ffad33] md:p-10 md:m-5 rounded-lg dark:bg-slate-700">
           <div className="flex justify-center mb-2 md:mb-10">
             <h1 className="text-lg md:text-5xl text-[#ffad33] dark:text-white font-bold">
               SignUp to LearnHub
@@ -46,6 +55,7 @@ const SignUpPage = () => {
                 <input
                   type="text"
                   id="firstname"
+                  name="firstname"
                   className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                   placeholder=" "
                   required
@@ -63,6 +73,7 @@ const SignUpPage = () => {
                 <input
                   type="text"
                   id="lastname"
+                  name="lastname"
                   className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                   placeholder=" "
                   required
@@ -80,6 +91,7 @@ const SignUpPage = () => {
                 <input
                   type="text"
                   id="company"
+                  name="company"
                   className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                   placeholder=" "
                   required
@@ -97,16 +109,17 @@ const SignUpPage = () => {
                 <input
                   type="tel"
                   id="phone"
+                  name="phone"
                   className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                   placeholder=" "
-                  pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                  pattern="[6-9]\d{9}"
                   required
                 />
                 <label
                   htmlFor="phone"
                   className="absolute start-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 bg-white px-2 text-sm text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4 dark:bg-gray-700 dark:text-gray-400 peer-focus:dark:text-blue-500"
                 >
-                  +123-45-678
+                  +91 1234567890
                 </label>
               </div>
             </div>
@@ -116,6 +129,7 @@ const SignUpPage = () => {
               <input
                 type="email"
                 id="email"
+                name="email"
                 className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                 placeholder=" "
                 required
@@ -133,6 +147,7 @@ const SignUpPage = () => {
               <input
                 type="password"
                 id="password"
+                name="password"
                 className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                 placeholder=" "
                 required
@@ -150,6 +165,7 @@ const SignUpPage = () => {
               <input
                 type="password"
                 id="confirmpassword"
+                name="confirmpassword"
                 className="peer block w-full appearance-none rounded-lg border-2 border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
                 placeholder=" "
                 required

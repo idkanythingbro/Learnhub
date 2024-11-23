@@ -13,6 +13,7 @@ import learning from "./../assets/book.svg";
 import dashboard from "./../assets/dashboard.svg";
 import { Popover, Button, Drawer, Sidebar, TextInput } from "flowbite-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ProfilePage = ({ user }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -34,6 +35,7 @@ const ProfilePage = ({ user }) => {
               <img src={menu_dark} />
             </button>
           </Popover>
+          <Link to="/dashboard">
           <Popover
             trigger="hover"
             content={<div className="dark:text-white">Dashboard</div>}
@@ -42,6 +44,7 @@ const ProfilePage = ({ user }) => {
               <img src={dashboard} />
             </button>
           </Popover>
+          </Link>
           <Popover
             trigger="hover"
             content={<div className="dark:text-white">My Learnings</div>}

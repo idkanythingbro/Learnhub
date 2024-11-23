@@ -1,28 +1,17 @@
 import axios from "axios";
-import { userApiRout } from "../assets/constant";
-import { setLoginUser } from "../redux/reducer/auth.reducer";
-import { navigate } from "../App";
 import { toast } from "react-toastify";
 import { errorToast } from "../utils/errorToast";
+import { userApiRout } from "../assets/constant";
 
 export const registerUser = (userData) => async (_) => {
     const toastId = toast.loading("Account creating...", {
         autoClose: 1000 * 60 * 10
     })
     try {
-        const formData = new FormData();
-        formData.append("name", userData.name);
-        formData.append("email", userData.email);
-        formData.append("phoneNumber", userData.phoneNumber);
-        formData.append("password", userData.password);
-        formData.append("role", userData.role);
-        formData.append("bio", userData.bio);
-        formData.append("experience", userData.experience);
-        formData.append("avatar", userData.profilePicture);
-
-        const response = await axios.post(`${userApiRout}/register/`, formData);
+        // console.log(userData);
+        const response = await axios.post(`http://127.0.0.1:5001/users/register/`, userData);
         if (response.data.success) {
-            navigate("/active", { state: { email: userData.email } })
+            // navigate("/active", { state: { email: userData.email } })
             toast.dismiss(toastId)
             toast.success(response.data.message);
         }
@@ -145,7 +134,7 @@ export const updateProfile = (key, value) => async (dispatch) => {
         return null;
     } catch (error) {
         console.log(error);
-        
+
         toast.dismiss(toastId)
         errorToast(error);
         return null;
