@@ -38,6 +38,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
         throw new ApiError(500, "Something went wrong while generating refresh and access token")
     }
 }
+
 const sendOtp = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -106,38 +107,38 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 //Active account
-const activeAccount = asyncHandler(async (req, res) => {
-    const { email, otp } = req.body;
-    console.log(otp);
+// const activeAccount = asyncHandler(async (req, res) => {
+//     const { email, otp } = req.body;
+//     console.log(otp);
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw new ApiError(404, "User not found")
-    }
-    if (user.isActive) {
-        throw new ApiError(400, "Account is already active")
-    }
-    const isOtpValid = await user.verifyOtp(otp);
-    if (!isOtpValid) {
-        throw new ApiError(400, "Invalid OTP")
-    }
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//         throw new ApiError(404, "User not found")
+//     }
+//     if (user.isActive) {
+//         throw new ApiError(400, "Account is already active")
+//     }
+//     const isOtpValid = await user.verifyOtp(otp);
+//     if (!isOtpValid) {
+//         throw new ApiError(400, "Invalid OTP")
+//     }
 
-    user.isActive = true;
-    await user.save({
-        validateModifiedOnly: true
-    });
-    res.status(200).json(new ApiResponse(
-        200,
-        {
-            user: {
-                _id: user._id,
-                userName: user.userName
-            }
+//     user.isActive = true;
+//     await user.save({
+//         validateModifiedOnly: true
+//     });
+//     res.status(200).json(new ApiResponse(
+//         200,
+//         {
+//             user: {
+//                 _id: user._id,
+//                 userName: user.userName
+//             }
 
-        },
-        "Your account has been activated"
-    ));
-})
+//         },
+//         "Your account has been activated"
+//     ));
+// })
 
 //Resend otp
 const sendOtpControllers = asyncHandler(async (req, res) => {
@@ -168,9 +169,9 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User not found")
     }
-    if (!user.isActive) {
-        throw new ApiError(400, "Your account is not activated")
-    }
+    // if (!user.isActive) {
+    //     throw new ApiError(400, "Your account is not activated")
+    // }
     const isMatch = await user.isPasswordCorrect(password);
     if (!isMatch) {
         throw new ApiError(401, "Invalid credentials")
@@ -463,7 +464,7 @@ const getLoggedInUserPost = asyncHandler(async (req, res) => {
 
 module.exports = {
     registerUser,
-    activeAccount,
+    // activeAccount,
     sendOtpControllers,
     loginUser,
     logoutUser,

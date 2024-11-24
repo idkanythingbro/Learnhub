@@ -1,15 +1,15 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { errorToast } from "../utils/errorToast";
-import { userApiRout } from "../assets/constant";
-
+// import { userApiRout } from "../assets/constant";
+const userApiRout="http://127.0.0.1:5001/users"
 export const registerUser = (userData) => async (_) => {
     const toastId = toast.loading("Account creating...", {
         autoClose: 1000 * 60 * 10
     })
     try {
         // console.log(userData);
-        const response = await axios.post(`http://127.0.0.1:5001/users/register/`, userData);
+        const response = await axios.post(`${userApiRout}/register/`, userData);
         if (response.data.success) {
             // navigate("/active", { state: { email: userData.email } })
             toast.dismiss(toastId)
@@ -22,17 +22,17 @@ export const registerUser = (userData) => async (_) => {
     }
 }
 
-export const activateAccount = async (otp, email) => {
-    try {
-        const response = await axios.post(`${userApiRout}/active-account`, { otp, email });
-        if (response.data.success) {
-            toast.success(response.data.message);
-            navigate("/")
-        }
-    } catch (error) {
-        errorToast(error);
-    }
-}
+// export const activateAccount = async (otp, email) => {
+//     try {
+//         const response = await axios.post(`${userApiRout}/active-account`, { otp, email });
+//         if (response.data.success) {
+//             toast.success(response.data.message);
+//             navigate("/")
+//         }
+//     } catch (error) {
+//         errorToast(error);
+//     }
+// }
 
 export const loginUser = (userData) => async (dispatch) => {
     const toastId = toast.loading("Logging in...", {
@@ -44,7 +44,9 @@ export const loginUser = (userData) => async (dispatch) => {
         });
         if (response.data.success) {
             toast.dismiss(toastId)
-            dispatch(getLoginUserDetails());
+            console.log(response.data);
+            
+            // dispatch(getLoginUserDetails());
 
         }
     } catch (error) {

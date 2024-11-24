@@ -9,14 +9,7 @@ import { Route, Routes } from "react-router-dom";
 import DashBoard from "./uicomponents/DashBoard";
 
 const Routing = () => {
-    const [user, setUser] = useState({
-        id: null,
-        name: null,
-        email: null,
-        password: null,
-        role: null,
-        token: null
-    });
+    const [user, setUser] = useState(null);
     // const loggedInUserData = useSelector(state => state.userReducer.user);
     // useEffect(() => {
     //     setUser(loggedInUserData);

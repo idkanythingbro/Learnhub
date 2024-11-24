@@ -1,8 +1,21 @@
 "use client";
 import { Button, Checkbox, Label, List, DarkThemeToggle } from "flowbite-react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { loginUser } from "../../service/user.service";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const handelLogin = (e) => {
+    e.preventDefault();
+    console.log(e.target);
+    
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    // console.log(email, password);
+    dispatch(loginUser({ email, password }));
+
+  };
   return (
     <div>
       <nav className="bg-[#ffad33] shadow-2xl border-gray-200 dark:bg-gray-900">
@@ -36,7 +49,7 @@ const LoginPage = () => {
       </nav>
       <div className="flex h-screen w-screen flex-col md:flex-row dark:bg-slate-700">
         <div className="flex w-screen flex-col items-center justify-center gap-2 md:h-screen md:w-1/2 dark:bg-slate-700">
-          <form className="m-2 flex w-full flex-col gap-4 rounded-2xl border-2 border-[#ffad33] px-6 py-8 md:w-1/2 dark:bg-slate-700">
+          <form onSubmit={handelLogin} className="m-2 flex w-full flex-col gap-4 rounded-2xl border-2 border-[#ffad33] px-6 py-8 md:w-1/2 dark:bg-slate-700">
             <Label className="text-lg text-[#ffad33]">
               Sign in to Continue with LearnHub
             </Label>

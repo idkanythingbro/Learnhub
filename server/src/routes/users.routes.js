@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const { registerUser,
-    activeAccount,
+    // activeAccount,
     sendOtpControllers,
     loginUser,
     logoutUser,
@@ -19,7 +19,7 @@ const { jwtVerify } = require('../middleware/auth.middleware');
 
 router.get("/", jwtVerify, getLoggedInUserPost)
 router.post('/register', upload.single("avatar"), registerUser);
-router.post('/active-account', activeAccount);
+// router.post('/active-account', activeAccount);
 router.post("/sendOtp", sendOtpControllers);
 router.post('/login', loginUser);
 router.get('/logout', jwtVerify, logoutUser);
