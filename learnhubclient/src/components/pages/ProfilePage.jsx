@@ -19,7 +19,7 @@ const ProfilePage = ({ user }) => {
           <Drawer.Items className="flex flex-col gap-4">
             {/* //REVIEW - add onClick to navigate to dashboard and every other path */}
             <Button onClick={() => navigator("/")} className="w-full">Dashoard</Button>
-            <Button className="w-full">My Learning</Button>
+            <Button className="w-full">My Learning </Button>
             <Button className="w-full">Achievements</Button>
             <Button className="w-full">Favourites</Button>
             <Button className="w-full">Search</Button>

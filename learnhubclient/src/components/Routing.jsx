@@ -4,12 +4,13 @@ import SignUpPage from "./pages/SignUpPage"
 import LoginPage from "./pages/LoginPage"
 import HomePage from "./pages/HomePage"
 import ProfilePage from "./pages/ProfilePage"
+// import ProfilePage from "./ProfilePage"
 
 import { Route, Routes } from "react-router-dom";
 import DashBoard from "./uicomponents/DashBoard";
 
 const Routing = () => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(true);
     // const loggedInUserData = useSelector(state => state.userReducer.user);
     // useEffect(() => {
     //     setUser(loggedInUserData);
@@ -30,7 +31,7 @@ const Routing = () => {
         return (
             <>
                 <Routes>
-                    <Route path="/" element={<ProfilePage user={user} />} >
+                    <Route path="/" element={<ProfilePage />} >
                         <Route path="" element={<DashBoard/>} />
                     </Route>
 

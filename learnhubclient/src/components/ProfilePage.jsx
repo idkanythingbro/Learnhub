@@ -1,4 +1,4 @@
-import NavBar from "./NavBar";
+import NavBar from "./uicomponents/NavBar";
 import menu_dark from "./../assets/menu_dark.svg";
 import achievement from "./../assets/achievement.svg";
 import favourite from "./../assets/favorite.svg";
@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 const ProfilePage = ({ user }) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => setIsOpen(false);
-
+  // const navigator = useNavigate();
   return (
     <div>
       <NavBar user={user} />
@@ -36,14 +36,14 @@ const ProfilePage = ({ user }) => {
             </button>
           </Popover>
           <Link to="/dashboard">
-          <Popover
-            trigger="hover"
-            content={<div className="dark:text-white">Dashboard</div>}
-          >
-            <button className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
-              <img src={dashboard} />
-            </button>
-          </Popover>
+            <Popover
+              trigger="hover"
+              content={<div className="dark:text-white">Dashboard</div>}
+            >
+              <button className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
+                <img src={dashboard} />
+              </button>
+            </Popover>
           </Link>
           <Popover
             trigger="hover"
@@ -130,7 +130,9 @@ const ProfilePage = ({ user }) => {
           <Drawer.Header title="MENU" titleIcon={() => <></>} />
           <Drawer.Items></Drawer.Items>
         </Drawer>
-        <div></div>
+        <div>
+
+        </div>
       </div>
     </div>
   );
