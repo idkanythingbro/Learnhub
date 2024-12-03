@@ -53,18 +53,20 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Password is required"],
-        minlength: [6, "Password must be at least 6 characters long"],
-        validate: {
-            validator: isPasswordValid,
-            message: `password must contain one uppercase,one lowercase,one digit`
-        },
+        minlength: [4, "Password must be at least 4 characters long"],
+        // validate: {
+        //     validator: isPasswordValid,
+        //     message: `password must contain one uppercase,one lowercase,one digit`
+        // },
     },
     avatar: {
         type: String, // cloudinary url
         default: null
     },
-
-
+    bio: {
+        type: String,
+        default: ""
+    },
     post: {
         type: Number,
         default: 0

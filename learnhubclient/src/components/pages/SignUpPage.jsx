@@ -1,15 +1,16 @@
 import { DarkThemeToggle } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../../service/user.service";
 import { useDispatch } from 'react-redux';
 const SignUpPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     // console.log(data);
-    dispatch(registerUser(data));
+    dispatch(registerUser(data,navigate));
   }
   return (
     <div>

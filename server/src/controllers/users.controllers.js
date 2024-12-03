@@ -39,40 +39,41 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 }
 
-const sendOtp = async (userId) => {
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            throw new ApiError(404, "User not found")
-        }
-        const otp = await user.generateOtp();
-        if (!otp) {
-            throw new ApiError(500, "Failed to generate OTP")
-        }
-        const isSuccess = await sendEmail(
-            user.email,
-            "Email verification",
-            `Your OTP is ${otp}`,
-            `<h1>Your OTP is ${otp}</h1>`
-        );
-        if (!isSuccess) {
-            throw new ApiError(500, "Failed to send OTP")
-        }
-        return true;
+// const sendOtp = async (userId) => {
+//     try {
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             throw new ApiError(404, "User not found")
+//         }
+//         const otp = await user.generateOtp();
+//         if (!otp) {
+//             throw new ApiError(500, "Failed to generate OTP")
+//         }
+//         const isSuccess = await sendEmail(
+//             user.email,
+//             "Email verification",
+//             `Your OTP is ${otp}`,
+//             `<h1>Your OTP is ${otp}</h1>`
+//         );
+//         if (!isSuccess) {
+//             throw new ApiError(500, "Failed to send OTP")
+//         }
+//         return true;
 
-    } catch (error) {
-        throw new ApiError(500, "Something went wrong while sending OTP")
-    }
+//     } catch (error) {
+//         throw new ApiError(500, "Something went wrong while sending OTP")
+//     }
 
-}
+// }
 
 
 // Register controller
+
 const registerUser = asyncHandler(async (req, res) => {
     let { firstname, lastname, email, phone, company, password, confirmpassword } = req.body;
     if (
         !firstname || !lastname || !email || !phone || !company || !password
-        || !isEmailValid(email) || !isPhoneNumberValid(phone) || !isPasswordValid(password)
+        || !isEmailValid(email) || !isPhoneNumberValid(phone)   // || !isPasswordValid(password)
     ) {
         throw new ApiError(400, "Invalid input");
     }
@@ -141,19 +142,19 @@ const registerUser = asyncHandler(async (req, res) => {
 // })
 
 //Resend otp
-const sendOtpControllers = asyncHandler(async (req, res) => {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw new ApiError(404, "User not found")
-    }
-    await sendOtp(user._id);
-    res.status(200).json(new ApiResponse(
-        200,
-        {},
-        "OTP has been resent to your registered email"
-    ));
-})
+// const sendOtpControllers = asyncHandler(async (req, res) => {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//         throw new ApiError(404, "User not found")
+//     }
+//     await sendOtp(user._id);
+//     res.status(200).json(new ApiResponse(
+//         200,
+//         {},
+//         "OTP has been resent to your registered email"
+//     ));
+// })
 
 // Login controller
 const loginUser = asyncHandler(async (req, res) => {
@@ -249,7 +250,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id).select("_id name userName email phoneNumber avatar bio");
+    
+    const user = await User.findById(req.user._id).select("_id userName firstName lastName company userName email phone avatar bio");
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -465,7 +467,7 @@ const getLoggedInUserPost = asyncHandler(async (req, res) => {
 module.exports = {
     registerUser,
     // activeAccount,
-    sendOtpControllers,
+    // sendOtpControllers,
     loginUser,
     logoutUser,
     refreshAccessToken,

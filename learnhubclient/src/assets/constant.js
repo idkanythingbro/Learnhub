@@ -1,4 +1,4 @@
-export const userApiRout="http://127.0.0.1:5001/users";
+export const userApiRout = `${import.meta.env.VITE_SERVER_BASE_URL}/users`;
 
 //for profile page
 export const usertag = "@defaultusertag"

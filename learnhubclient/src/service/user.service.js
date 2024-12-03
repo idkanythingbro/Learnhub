@@ -1,24 +1,26 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { errorToast } from "../utils/errorToast";
-// import { userApiRout } from "../assets/constant";
-const userApiRout="http://127.0.0.1:5001/users"
-export const registerUser = (userData) => async (_) => {
+import { setLoginUser } from "../redux/reducer/auth.reducer";
+import { userApiRout } from "../assets/constant";
+
+export const registerUser = (userData,navigate) => async (_) => {
     const toastId = toast.loading("Account creating...", {
         autoClose: 1000 * 60 * 10
     })
     try {
-        // console.log(userData);
         const response = await axios.post(`${userApiRout}/register/`, userData);
         if (response.data.success) {
-            // navigate("/active", { state: { email: userData.email } })
             toast.dismiss(toastId)
             toast.success(response.data.message);
+            navigate("/sign-in");
         }
+        return true;
 
     } catch (error) {
         toast.dismiss(toastId)
         errorToast(error);
+        return false;
     }
 }
 
@@ -34,7 +36,7 @@ export const registerUser = (userData) => async (_) => {
 //     }
 // }
 
-export const loginUser = (userData) => async (dispatch) => {
+export const loginUser = (userData,navigate) => async (dispatch) => {
     const toastId = toast.loading("Logging in...", {
         autoClose: 1000 * 60 * 10
     })
@@ -44,9 +46,8 @@ export const loginUser = (userData) => async (dispatch) => {
         });
         if (response.data.success) {
             toast.dismiss(toastId)
-            console.log(response.data);
-            
-            // dispatch(getLoginUserDetails());
+            dispatch(getLoginUserDetails());
+            navigate("/");
 
         }
     } catch (error) {
@@ -62,12 +63,12 @@ export const logoutUser = () => async (dispatch) => {
         });
         if (response.data.success) {
             dispatch(setLoginUser(null));
-            navigate("/");
         }
     } catch (error) {
         errorToast(error);
     }
 }
+
 let refreshCnt = 0;
 export const getLoginUserDetails = () => async (dispatch) => {
     try {
@@ -93,13 +94,14 @@ export const getLoginUserDetails = () => async (dispatch) => {
                 return null;
 
             } catch (error) {
-                errorToast(error);
+                // errorToast(error);
                 return null;
             }
         }
 
     }
 }
+
 
 export const getProfile = async (userName, id) => {
     try {

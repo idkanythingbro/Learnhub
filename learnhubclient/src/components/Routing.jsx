@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SignUpPage from "./pages/SignUpPage"
 import LoginPage from "./pages/LoginPage"
 import HomePage from "./pages/HomePage"
 import ProfilePage from "./pages/ProfilePage"
-// import ProfilePage from "./ProfilePage"
 
 import { Route, Routes } from "react-router-dom";
 import DashBoard from "./uicomponents/DashBoard";
+import { getLoginUserDetails } from "../service/user.service";
 
 const Routing = () => {
-    const [user, setUser] = useState(true);
-    // const loggedInUserData = useSelector(state => state.userReducer.user);
-    // useEffect(() => {
-    //     setUser(loggedInUserData);
-    // }, [loggedInUserData])
+    const [user, setUser] = useState(null);
+    const dispatch = useDispatch();
+    const loggedInUserData = useSelector(state => state.userReducer.user);
+
+    useEffect(() => {
+        dispatch(getLoginUserDetails());
+    }, [])
+
+    useEffect(() => {
+        setUser(loggedInUserData);
+    }, [loggedInUserData])
+
     if (!user) {
         return (
             <>
                 <Routes>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<HomePage user={user} />} />
                     <Route path="/sign-up" element={<SignUpPage />} />
                     <Route path="/sign-in" element={<LoginPage />} />
                     <Route path="*" element={<>Not Found</>} />
@@ -31,8 +38,8 @@ const Routing = () => {
         return (
             <>
                 <Routes>
-                    <Route path="/" element={<ProfilePage />} >
-                        <Route path="" element={<DashBoard/>} />
+                    <Route path="/" element={<ProfilePage user={user} />} >
+                        <Route path="" element={<DashBoard />} />
                     </Route>
 
                     <Route path="*" element={<>Not Found</>} />

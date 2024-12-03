@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Button,
   DarkThemeToggle,
@@ -7,17 +6,20 @@ import {
   Dropdown,
   Avatar,
 } from "flowbite-react";
-// import { useState } from 'react'
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../service/user.service";
 
 const NavBar = ({ user }) => {
-  // const [user, setUser] = useState(false);
 
   const navigate = useNavigate();
-
+const dispatch = useDispatch();
   function signUp() {
     navigate("/sign-up");
   }
+  const handelSignOut = () => {
+   dispatch(logoutUser());
+  };
 
   if (!user) {
     return (
@@ -67,22 +69,23 @@ const NavBar = ({ user }) => {
             <Avatar
               className="m-1"
               alt="User settings"
-              img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+              img={user?.avatar}
               rounded
             />
           }
         >
           <Dropdown.Header>
-            <span className="block text-sm">Bonnie Green</span>
+            <span className="block text-sm">{user?.firstName} {user?.lastName}</span>
             <span className="block truncate text-sm font-medium">
-              name@learnhub.com
+              {user?.email}
             </span>
           </Dropdown.Header>
+
           <Dropdown.Item>Dashboard</Dropdown.Item>
           <Dropdown.Item>Settings</Dropdown.Item>
           <Dropdown.Item>Earnings</Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item>Sign out</Dropdown.Item>
+          <Dropdown.Item onClick={handelSignOut}>Sign out</Dropdown.Item>
         </Dropdown>
         <Navbar.Toggle />
       </div>

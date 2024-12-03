@@ -1,19 +1,18 @@
 "use client";
 import { Button, Checkbox, Label, List, DarkThemeToggle } from "flowbite-react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../service/user.service";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handelLogin = (e) => {
-    e.preventDefault();
-    console.log(e.target);
-    
+    e.preventDefault();    
     const email = e.target.email.value;
     const password = e.target.password.value;
     // console.log(email, password);
-    dispatch(loginUser({ email, password }));
+    dispatch(loginUser({ email, password }, navigate));
 
   };
   return (
