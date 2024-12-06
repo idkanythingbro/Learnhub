@@ -159,13 +159,14 @@ const registerUser = asyncHandler(async (req, res) => {
 // Login controller
 const loginUser = asyncHandler(async (req, res) => {
     // Add your code here
-    const { email, userName, phoneNumber, password } = req.body
-    if (!(email || userName || phoneNumber)) {
+    const { email, userName, phone, password } = req.body
+    console.log(email)
+    if (!(email || userName || phone)) {
         throw new ApiError(400, "Invalid input")
     }
 
     const user = await User.findOne({
-        $or: [{ userName }, { email }, { phoneNumber }]
+        $or: [{ userName }, { email }, { phone }]
     })
     if (!user) {
         throw new ApiError(404, "User not found")

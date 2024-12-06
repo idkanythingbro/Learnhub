@@ -31,7 +31,10 @@ const sidebar = ({ setIsOpen }) => {
         trigger="hover"
         content={<div className="dark:text-white">Dashboard</div>}
       >
-        <Link to={"/"} className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
+        <Link
+          to={"/dashboard"}
+          className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    "
+        >
           <img src={dashboard} />
         </Link>
       </Popover>
@@ -39,7 +42,10 @@ const sidebar = ({ setIsOpen }) => {
         trigger="hover"
         content={<div className="dark:text-white">My Learnings</div>}
       >
-        <Link to={"/my-learnings"} className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg  ">
+        <Link
+          to={"/my-learnings"}
+          className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg  "
+        >
           <img src={learning} />
         </Link>
       </Popover>
@@ -47,7 +53,10 @@ const sidebar = ({ setIsOpen }) => {
         trigger="hover"
         content={<div className="dark:text-white">Achievements</div>}
       >
-        <Link to={"/achievements"} className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
+        <Link
+          to={"/achievements"}
+          className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    "
+        >
           <img src={achievement} />
         </Link>
       </Popover>
@@ -55,7 +64,10 @@ const sidebar = ({ setIsOpen }) => {
         trigger="hover"
         content={<div className="dark:text-white">Favourites</div>}
       >
-        <Link to={"/favourite"} className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
+        <Link
+          to={"/favourite"}
+          className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    "
+        >
           <img src={favourite} />
         </Link>
       </Popover>
@@ -64,7 +76,10 @@ const sidebar = ({ setIsOpen }) => {
         content={<div className="dark:text-white">Search</div>}
       >
         {/* //REVIEW - =================================== */}
-        <Link to={"/search"} className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    ">
+        <Link
+          to={"/search"}
+          className="flex p-2 shadow-md rounded-md dark:bg-white hover:shadow-lg    "
+        >
           <img src={search} />
         </Link>
       </Popover>
