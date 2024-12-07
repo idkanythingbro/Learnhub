@@ -7,8 +7,6 @@ require('dotenv').config()
 
 // Define the path to the temp folder
 
-
-
 const port = process.env.PORT || 8000;
 connectDB()
     .then(() => {
