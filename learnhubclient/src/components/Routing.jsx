@@ -9,6 +9,7 @@ import { Route, Routes } from "react-router-dom";
 import DashBoard from "./uicomponents/DashBoard";
 import MyLearnings from "./uicomponents/MyLearnings";
 import { getLoginUserDetails } from "../service/user.service";
+import VideoPlayer from "./uicomponents/VideoPlayer";
 
 const Routing = () => {
   const [user, setUser] = useState(null);
@@ -42,6 +43,7 @@ const Routing = () => {
             {/* <Route path="/" element={<DashBoard />} /> */}
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/my-learnings" element={<MyLearnings />} />
+            <Route path="/my-learnings/player" element={<VideoPlayer />} />
           </Route>
 
           <Route path="*" element={<>Not Found</>} />

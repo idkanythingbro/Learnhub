@@ -1,4 +1,5 @@
 import { Tabs, TextInput } from "flowbite-react";
+import CourseCard from "./CourseCard";
 const MyLearnings = () => {
   return (
     <Tabs
@@ -7,13 +8,7 @@ const MyLearnings = () => {
       variant="underline"
     >
       <Tabs.Item active title="All Courses">
-        This is{" "}
-        <span className="font-medium text-gray-800 dark:text-white">
-          Profile tab's associated content
-        </span>
-        . Clicking another tab will toggle the visibility of this one for the
-        next. The tab JavaScript swaps classes to control the content visibility
-        and styling.
+        <CourseCard />
       </Tabs.Item>
       <Tabs.Item title="My Lists">
         This is{" "}
