@@ -39,7 +39,7 @@ const DashBoard = () => {
             Name : {userName}
           </span>
           <span className="font-semibold text-lg shadow-sm w-full">
-            Organization Name {orgName}:{" "}
+            Organization Name : {orgName}
           </span>
           <span className="font-semibold text-lg shadow-sm w-full">
             Email : {userEmail}
@@ -55,12 +55,12 @@ const DashBoard = () => {
           </span>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row h-[40%]">
-        <div className="w-full lg:w-[20%] ">Long Term Goals</div>
-        <div className="w-full lg:w-[20%] ">Yearly Goals</div>
-        <div className="w-full lg:w-[20%] ">Monthly Goals</div>
-        <div className="w-full lg:w-[20%] ">Weekly Goals</div>
-        <div className="w-full lg:w-[20%] ">Todays Goals</div>
+      <div className="flex flex-col lg:flex-row h-[40%] gap-4 m-2">
+        <div className="w-full lg:w-[20%] bg-black rounded-2xl">Long Term Goals</div>
+        <div className="w-full lg:w-[20%] bg-black rounded-2xl">Yearly Goals</div>
+        <div className="w-full lg:w-[20%] bg-black rounded-2xl">Monthly Goals</div>
+        <div className="w-full lg:w-[20%] bg-black rounded-2xl">Weekly Goals</div>
+        <div className="w-full lg:w-[20%] bg-black rounded-2xl">Todays Goals</div>
       </div>
     </div>
   );

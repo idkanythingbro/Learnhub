@@ -15,7 +15,11 @@ const ProfilePage = ({ user }) => {
       <NavBar user={user} />
       <div className="flex flex-row">
         <Sidebar setIsOpen={setIsOpen} />
-        <Drawer open={isOpen} onClose={handleClose} className="scrollbar-hidden">
+        <Drawer
+          open={isOpen}
+          onClose={handleClose}
+          className="scrollbar-hidden"
+        >
           <Drawer.Header title="MENU" titleIcon={() => <></>} />
           <Drawer.Items className="flex flex-col gap-4">
             <div className="flex justify-center items-center flex-col rounded-md shadow-lg p-1 dark:bg-slate-800">
