@@ -1,21 +1,44 @@
-import { Navbar, TextInput } from "flowbite-react";
+import { Tabs, TextInput } from "flowbite-react";
+import CourseCard from "./CourseCard";
 const MyLearnings = () => {
   return (
-    <div>
-      <Navbar fluid className="flex">
-        <div className="flex flex-row justify-center items-center">
-          <TextInput id="search-course" fluid="true" className="flex mr-4" />
-          <Navbar.Toggle />
-          <Navbar.Collapse>
-            <Navbar.Link href="#">All Courses</Navbar.Link>
-            <Navbar.Link href="#">My Lists</Navbar.Link>
-            <Navbar.Link href="#">Wishlist</Navbar.Link>
-            <Navbar.Link href="#">Archived</Navbar.Link>
-            <Navbar.Link href="#">Learning Tools</Navbar.Link>
-          </Navbar.Collapse>
-        </div>
-      </Navbar>
-    </div>
+    <Tabs
+      className="flex justify-center items-center  dark:bg-gray-800"
+      aria-label="Tabs with icons"
+      variant="underline"
+    >
+      <Tabs.Item active title="All Courses">
+        <CourseCard />
+      </Tabs.Item>
+      <Tabs.Item title="My Lists">
+        This is{" "}
+        <span className="font-medium text-gray-800 dark:text-white">
+          Dashboard tab's associated content
+        </span>
+        . Clicking another tab will toggle the visibility of this one for the
+        next. The tab JavaScript swaps classes to control the content visibility
+        and styling.
+      </Tabs.Item>
+      <Tabs.Item title="Wishlist">
+        This is{" "}
+        <span className="font-medium text-gray-800 dark:text-white">
+          Settings tab's associated content
+        </span>
+        . Clicking another tab will toggle the visibility of this one for the
+        next. The tab JavaScript swaps classes to control the content visibility
+        and styling.
+      </Tabs.Item>
+      <Tabs.Item title="Archived">
+        This is{" "}
+        <span className="font-medium text-gray-800 dark:text-white">
+          Contacts tab's associated content
+        </span>
+        . Clicking another tab will toggle the visibility of this one for the
+        next. The tab JavaScript swaps classes to control the content visibility
+        and styling.
+      </Tabs.Item>
+      <Tabs.Item title="Learning Tools">Disabled content</Tabs.Item>
+    </Tabs>
   );
 };
 
