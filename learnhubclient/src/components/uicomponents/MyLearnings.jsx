@@ -1,4 +1,4 @@
-import { Tabs, TextInput } from "flowbite-react";
+import { Tabs } from "flowbite-react";
 import CourseCard from "./CourseCard";
 const MyLearnings = () => {
   return (
@@ -13,7 +13,7 @@ const MyLearnings = () => {
       <Tabs.Item title="My Lists">
         This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Dashboard tab's associated content
+          Dashboard tab&apos;s associated content
         </span>
         . Clicking another tab will toggle the visibility of this one for the
         next. The tab JavaScript swaps classes to control the content visibility
@@ -22,7 +22,7 @@ const MyLearnings = () => {
       <Tabs.Item title="Wishlist">
         This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Settings tab's associated content
+          Settings tab&apos;s associated content
         </span>
         . Clicking another tab will toggle the visibility of this one for the
         next. The tab JavaScript swaps classes to control the content visibility
@@ -31,7 +31,7 @@ const MyLearnings = () => {
       <Tabs.Item title="Archived">
         This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Contacts tab's associated content
+          Contacts tab&apos;s associated content
         </span>
         . Clicking another tab will toggle the visibility of this one for the
         next. The tab JavaScript swaps classes to control the content visibility

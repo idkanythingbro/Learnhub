@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "npm install express-session",
+			"command": "npm",
+			"args": [
+				"i",
+				"express-session"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/learnhubclient"
+			},
+			"presentation": {
+				"reveal": "silent"
+			}
+		}
+	]
+}

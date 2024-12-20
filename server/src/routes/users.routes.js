@@ -31,6 +31,7 @@ router.put("/follow", jwtVerify, follow);
 router.put("/unfollow", jwtVerify, unfollow);
 router.get("/:identifier", getUserProfile);
 
+//TODO - Google login
 
 
 module.exports = router;

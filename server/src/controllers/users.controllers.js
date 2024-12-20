@@ -167,7 +167,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({
         $or: [{ userName }, { email }, { phone }]
     })
-    console.log(user);
+    // console.log(user);
     
     if (!user) {
         throw new ApiError(404, "User not found")

@@ -3,6 +3,12 @@ const app = express();
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler.middleware')
 const cookieParser = require('cookie-parser')
+
+//TODO - 
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
 const corsOption = {
     origin: true,
     credentials: true  // Accept cookies
@@ -13,6 +19,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("uploads"))
 app.use(cookieParser())
+
+//TODO -
 
 
 
