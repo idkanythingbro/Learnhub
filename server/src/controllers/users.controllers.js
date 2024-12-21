@@ -9,7 +9,7 @@ const { isFileSizeValid, isEmailValid, isPhoneNumberValid, isPasswordValid, isGi
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
-const sendEmail = require("../service/email.service");
+// const sendEmail = require("../service/email.service");
 const { accessTokenCookieOption, refreshTokenCookieOption, accessTokenCookieName, refreshTokenCookieName } = require("../assets/constan");
 const Post = require("../models/post.models");
 
@@ -39,40 +39,10 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 }
 
-// const sendOtp = async (userId) => {
-//     try {
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             throw new ApiError(404, "User not found")
-//         }
-//         const otp = await user.generateOtp();
-//         if (!otp) {
-//             throw new ApiError(500, "Failed to generate OTP")
-//         }
-//         const isSuccess = await sendEmail(
-//             user.email,
-//             "Email verification",
-//             `Your OTP is ${otp}`,
-//             `<h1>Your OTP is ${otp}</h1>`
-//         );
-//         if (!isSuccess) {
-//             throw new ApiError(500, "Failed to send OTP")
-//         }
-//         return true;
-
-//     } catch (error) {
-//         throw new ApiError(500, "Something went wrong while sending OTP")
-//     }
-
-// }
-
-
-// Register controller
-
 const registerUser = asyncHandler(async (req, res) => {
-    let { firstname, lastname, email, phone, company, password, confirmpassword } = req.body;
+    let { firstname, lastname, email, phone, organization, password, confirmpassword } = req.body;
     if (
-        !firstname || !lastname || !email || !phone || !company || !password
+        !firstname || !lastname || !email || !phone || !organization || !password
         || !isEmailValid(email) || !isPhoneNumberValid(phone)   // || !isPasswordValid(password)
     ) {
         throw new ApiError(400, "Invalid input");
@@ -84,19 +54,19 @@ const registerUser = asyncHandler(async (req, res) => {
     if (existingUser) {
         throw new ApiError(400, "User already exists")
     }
+
     let currentTime = Date.now().toString();
     let userName = email.split('@')[0] + currentTime.substring(currentTime.length - 2);
-    const user = await User.create(
-        {
-            firstName: firstname,
-            lastName: lastname,
-            userName,
-            email,
-            phone,
-            company,
-            password,
-        });
-    // await sendOtp(user._id);
+
+    const user = await User.create({
+        name: `${firstname} ${lastname}`,
+        userName,
+        email,
+        phone,
+        organization,
+        password,
+    });
+
     res.status(201).json(new ApiResponse(
         201,
         {
@@ -106,55 +76,6 @@ const registerUser = asyncHandler(async (req, res) => {
         "User registered successfully"
     ));
 })
-
-//Active account
-// const activeAccount = asyncHandler(async (req, res) => {
-//     const { email, otp } = req.body;
-//     console.log(otp);
-
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//         throw new ApiError(404, "User not found")
-//     }
-//     if (user.isActive) {
-//         throw new ApiError(400, "Account is already active")
-//     }
-//     const isOtpValid = await user.verifyOtp(otp);
-//     if (!isOtpValid) {
-//         throw new ApiError(400, "Invalid OTP")
-//     }
-
-//     user.isActive = true;
-//     await user.save({
-//         validateModifiedOnly: true
-//     });
-//     res.status(200).json(new ApiResponse(
-//         200,
-//         {
-//             user: {
-//                 _id: user._id,
-//                 userName: user.userName
-//             }
-
-//         },
-//         "Your account has been activated"
-//     ));
-// })
-
-//Resend otp
-// const sendOtpControllers = asyncHandler(async (req, res) => {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//         throw new ApiError(404, "User not found")
-//     }
-//     await sendOtp(user._id);
-//     res.status(200).json(new ApiResponse(
-//         200,
-//         {},
-//         "OTP has been resent to your registered email"
-//     ));
-// })
 
 // Login controller
 const loginUser = asyncHandler(async (req, res) => {
@@ -168,7 +89,7 @@ const loginUser = asyncHandler(async (req, res) => {
         $or: [{ userName }, { email }, { phone }]
     })
     // console.log(user);
-    
+
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -252,22 +173,19 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
-    
-    const user = await User.findById(req.user._id).select("_id userName firstName lastName company userName email phone avatar bio");
+
+    const user = await User.findById(req.user._id).select("_id userName name organization  email phone avatar");
     if (!user) {
         throw new ApiError(404, "User not found")
     }
     res.status(200).json(new ApiResponse(200, user, "User details fetched successfully"))
 })
+
 //Gate user profile
 const getUserProfile = asyncHandler(async (req, res) => {
-    const { identifier } = req.params;
-    const user = await User.findOne({
-        $or: [
-            { userName: identifier },
-            { _id: mongoose.isValidObjectId(identifier) ? identifier : null },
-        ]
-    }).select("-password -refreshToken");
+    // const { identifier } = req.params;
+    const userId = req.user._id;
+    const user = await User.findById(userId).select("-password -refreshToken");
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -275,6 +193,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 })
 
 //Update password
+//FIXME - 
 const updatePassword = asyncHandler(async (req, res) => {
     const { userId, userName, email, newPassword, oldPassword, otp } = req.body;
     console.log("ch");
@@ -312,19 +231,18 @@ const updatePassword = asyncHandler(async (req, res) => {
 
 //Update profile
 const updateProfile = asyncHandler(async (req, res) => {
+    // console.log(req.body);
     const {
         name,
-        phoneNumber,
-        bio,
-        experience,
-        collage,
+        organization,
+        phone,
+        email,
+        description,
         location,
-        githubUrl,
-        linkedinUrl,
-        twitterUrl,
-        websiteUrl
+        designation,
     } = req.body;
     const userId = req.user._id;
+
     let localFilePath = null;
     if (req.file) {
         const file = req.file;
@@ -335,16 +253,15 @@ const updateProfile = asyncHandler(async (req, res) => {
             throw new ApiError(400, `File size must be under ${process.env.PROFILE_PHOTO_MAXIMUM_SIZE}`)
         }
     }
+
     if (!userId) {
         if (localFilePath) {
             fs.unlinkSync(localFilePath);
         }
         throw new ApiError(400, "Invalid request")
     }
-    const user = await User.findOne({
-        _id: userId,
-        isActive: true
-    }).select("-password -refreshToken");
+    const user = await User.findById(userId).select("-password -refreshToken");
+
     if (!user) {
         if (localFilePath) {
             fs.unlinkSync(localFilePath);
@@ -359,22 +276,16 @@ const updateProfile = asyncHandler(async (req, res) => {
             await deleteFromCloudinary(oldAvatar);
         }
     }
+
     if (name) user.name = name;
-    if (phoneNumber && isPhoneNumberValid(phoneNumber)) user.phoneNumber = phoneNumber;
-    if (bio) user.bio = bio;
-    if (experience) user.experience = experience;
-    if (collage) user.collage = collage;
+    if (email && isEmailValid(email)) user.email = email;
+    if (phone && isPhoneNumberValid(phone)) user.phone = phone;
+    if (description) user.description = description;
+    if (organization) user.organization = organization;
     if (location) user.location = location;
-
-    if (githubUrl && isGithubLinkValid(githubUrl)) user.socialLinks.github = githubUrl;
-    if (linkedinUrl && isLinkedinLinkValid(linkedinUrl)) user.socialLinks.linkedin = linkedinUrl;
-    if (twitterUrl && isTwitterLinkValid(twitterUrl)) user.socialLinks.twitter = twitterUrl;
-    if (websiteUrl && isLinkValid(websiteUrl)) user.socialLinks.website = websiteUrl;
-
-
+    if (designation) user.designation = designation;
     await user.save({ validateModifiedOnly: true });
     res.status(200).json(new ApiResponse(200, user, "Profile updated successfully"));
-
 })
 
 //Follow

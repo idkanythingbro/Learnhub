@@ -1,10 +1,10 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { errorToast } from "../utils/errorToast";
-import { setLoginUser } from "../redux/reducer/auth.reducer";
+import { setLoginUser, setProfile } from "../redux/reducer/auth.reducer";
 import { userApiRout } from "../assets/constant";
 
-export const registerUser = (userData,navigate) => async (_) => {
+export const registerUser = (userData, navigate) => async (_) => {
     const toastId = toast.loading("Account creating...", {
         autoClose: 1000 * 60 * 10
     })
@@ -36,7 +36,7 @@ export const registerUser = (userData,navigate) => async (_) => {
 //     }
 // }
 
-export const loginUser = (userData,navigate) => async (dispatch) => {
+export const loginUser = (userData, navigate) => async (dispatch) => {
     const toastId = toast.loading("Logging in...", {
         autoClose: 1000 * 60 * 10
     })
@@ -103,15 +103,15 @@ export const getLoginUserDetails = () => async (dispatch) => {
 }
 
 
-export const getProfile = async (userName, id) => {
+export const getProfile = () => async (dispatch) => {
     try {
-        if (!userName && !id) {
-            return null;
-        }
-        let identifier = userName || id;
-        const response = await axios.get(`${userApiRout}/${identifier}`);
+        const response = await axios.get(`${userApiRout}/profile/`, {
+            withCredentials: true,
+        });
+
         if (response.data.success) {
-            return response.data.data;
+            // return response.data.data;
+            dispatch(setProfile(response.data.data));
         }
         return null;
     } catch (error) {
@@ -120,19 +120,20 @@ export const getProfile = async (userName, id) => {
     }
 }
 
-export const updateProfile = (key, value) => async (dispatch) => {
+export const updateProfile = (data) => async (dispatch) => {
     const toastId = toast.loading("Updating...",)
     try {
-        const formData = new FormData();
-        formData.append(key, value);
 
-        const response = await axios.put(`${userApiRout}/update-profile/`, formData, {
+        // const formData = new FormData();
+        // formData.append(key, value);
+        const response = await axios.put(`${userApiRout}/update-profile/`, data, {
             withCredentials: true
         });
+
         if (response.data.success) {
             toast.dismiss(toastId)
-            toast.success(`${key} updated successfully`);
-            dispatch(getLoginUserDetails());
+            toast.success(`Updated successfully`);
+            dispatch(setProfile(response.data.data));
             return response.data.data;
         }
         return null;

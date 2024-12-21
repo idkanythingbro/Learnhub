@@ -6,17 +6,22 @@ const generateOtp = require("../utils/generatOtp");
 const Otp = require("./otp.models");
 
 const userSchema = new mongoose.Schema({
-    firstName: {
+    // firstName: {
+    //     type: String,
+    //     required: true,
+    //     trim: true,
+    // },
+    // lastName: {
+    //     type: String,
+    //     required: true,
+    //     trim: true,
+    // },
+    name:{
         type: String,
         required: true,
         trim: true,
     },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    company: {
+    organization: {
         type: String,
         required: true,
         trim: true,
@@ -54,19 +59,24 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: [4, "Password must be at least 4 characters long"],
-        // validate: {
-        //     validator: isPasswordValid,
-        //     message: `password must contain one uppercase,one lowercase,one digit`
-        // },
     },
     avatar: {
         type: String, // cloudinary url
         default: null
     },
-    bio: {
+    description: {
         type: String,
         default: ""
     },
+    location: {
+        type: String,
+        default: ""
+    },
+    designation: {
+        type: String,
+        default: ""
+    },
+
     post: {
         type: Number,
         default: 0

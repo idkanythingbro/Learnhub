@@ -29,7 +29,7 @@ router.put("/update-password", updatePassword);
 router.put("/update-profile", jwtVerify, upload.single("avatar"), updateProfile)
 router.put("/follow", jwtVerify, follow);
 router.put("/unfollow", jwtVerify, unfollow);
-router.get("/:identifier", getUserProfile);
+router.get("/profile",jwtVerify, getUserProfile);
 
 //TODO - Google login
 

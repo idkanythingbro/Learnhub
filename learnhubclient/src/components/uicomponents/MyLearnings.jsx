@@ -3,41 +3,40 @@ import CourseCard from "./CourseCard";
 const MyLearnings = () => {
   return (
     <Tabs
-      className="flex justify-center items-center  dark:bg-gray-800"
+      className="flex justify-center items-center   dark:bg-gray-800"
       aria-label="Tabs with icons"
       variant="underline"
     >
       <Tabs.Item active title="All Courses">
-        <CourseCard />
+        <CourseCard
+          courseimage="https://th.bing.com/th?id=OIP.pITjdsGR7h3HQ53M-YETXAHaE7&w=306&h=204&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2"
+          coursename="Cloud Computing"
+          description="Here are the biggest enterprise technology acquisitions of 2021 so far,
+        in reverse chronological order."
+        />
       </Tabs.Item>
       <Tabs.Item title="My Lists">
-        This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Dashboard tab&apos;s associated content
+          No content here yet!!
         </span>
-        . Clicking another tab will toggle the visibility of this one for the
-        next. The tab JavaScript swaps classes to control the content visibility
-        and styling.
+        .
       </Tabs.Item>
       <Tabs.Item title="Wishlist">
-        This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Settings tab&apos;s associated content
+          No content here yet!!
         </span>
-        . Clicking another tab will toggle the visibility of this one for the
-        next. The tab JavaScript swaps classes to control the content visibility
-        and styling.
       </Tabs.Item>
       <Tabs.Item title="Archived">
-        This is{" "}
         <span className="font-medium text-gray-800 dark:text-white">
-          Contacts tab&apos;s associated content
+          No content here yet!!
         </span>
-        . Clicking another tab will toggle the visibility of this one for the
-        next. The tab JavaScript swaps classes to control the content visibility
-        and styling.
       </Tabs.Item>
-      <Tabs.Item title="Learning Tools">Disabled content</Tabs.Item>
+      <Tabs.Item title="Learning Tools">
+        {" "}
+        <span className="font-medium text-gray-800 dark:text-white">
+          Comming Soon!!
+        </span>
+      </Tabs.Item>
     </Tabs>
   );
 };

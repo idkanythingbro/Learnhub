@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../service/user.service";
 
 const NavBar = ({ user }) => {
+  console.log(user);
+  
 
   const navigate = useNavigate();
 const dispatch = useDispatch();
@@ -75,7 +77,7 @@ const dispatch = useDispatch();
           }
         >
           <Dropdown.Header>
-            <span className="block text-sm">{user?.firstName} {user?.lastName}</span>
+            <span className="block text-sm">{user?.name} </span>
             <span className="block truncate text-sm font-medium">
               {user?.email}
             </span>
