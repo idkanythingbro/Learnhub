@@ -31,19 +31,11 @@ router.put("/update-password", updatePassword);
 router.put("/update-profile", jwtVerify, upload.single("avatar"), updateProfile)
 router.put("/follow", jwtVerify, follow);
 router.put("/unfollow", jwtVerify, unfollow);
-router.get("/profile",jwtVerify, getUserProfile);
+router.get("/profile", jwtVerify, getUserProfile);
 
-//TODO - Google login
-// router.get("/me",async(req,res)=>{
+// TODO - Google login
 
-//     console.log("Sucess",req);
-//         if(req.user){
-            
-//             res.status(200).json(new ApiResponse(200,"user Login",req.user))
-//         }else{
-//             res.status(400).json({message:"Not Authorized"})
-//         }
-//     })
+
 
 
 module.exports = router;

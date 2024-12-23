@@ -26,11 +26,12 @@ const userDetailsSchema = new mongoose.Schema({
             validator: isPhoneNumberValid,
             message: props => `${props.value} is not a valid phone number!`
         },
+        default: "N/A"
     },
     organization: {
         type: String,
-        // required: true,
         trim: true,
+        default: "N/A"
     },
     description: {
         type: String,

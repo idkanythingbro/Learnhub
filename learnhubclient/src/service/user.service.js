@@ -79,7 +79,7 @@ export const getLoginUserDetails = () => async (dispatch) => {
             withCredentials: true
         });
         if (response.data.success) {
-            console.log("getLoginUserDetails",response.data.data);
+            // console.log("getLoginUserDetails",response.data.data);
             
             dispatch(setLoginUser(response.data.data));
             refreshCnt = 0;

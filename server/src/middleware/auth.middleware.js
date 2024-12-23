@@ -4,11 +4,16 @@ const asyncHandler = require("../utils/asyncHandler");
 const jwt = require("jsonwebtoken");
 
 const jwtVerify = asyncHandler(async (req, _, next) => {
+    if(req.user){
+        // console.log("JWt=>",req.user);
+        next();  
+        return;
+    }
     try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
-        // console.log(req);
-        // console.log(token);
+      
         
+        
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");     
         if (!token) {
             throw new ApiError(401, "Unauthorized request");
         }

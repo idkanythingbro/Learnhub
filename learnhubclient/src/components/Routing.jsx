@@ -10,13 +10,26 @@ import DashBoard from "./uicomponents/DashBoard";
 import MyLearnings from "./uicomponents/MyLearnings";
 import { getLoginUserDetails } from "../service/user.service";
 import VideoPlayer from "./uicomponents/VideoPlayer";
+import axios from "axios";
 
 const Routing = () => {
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
   const loggedInUserData = useSelector((state) => state.userReducer.user);
 
+  // const getUser = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:5001/users/login/sucess", { withCredentials: true });
+  //     console.log("response 1", response)
+  //   } catch (error) {
+  //     console.log("error", error);
+
+  //     // navigate("*")
+  //   }
+  // }
+
   useEffect(() => {
+    // getUser();
     dispatch(getLoginUserDetails());
   }, []);
 

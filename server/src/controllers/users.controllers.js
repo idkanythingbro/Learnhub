@@ -4,7 +4,7 @@ const ApiError = require("../utils/ApiErrors");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadFileToCloudinary, deleteFromCloudinary } = require("../service/cloudinary.service");
-const {User,UserDetails} = require("../models/user.model");
+const { User, UserDetails, GoogleUser } = require("../models/user.model");
 const { isFileSizeValid, isEmailValid, isPhoneNumberValid, isPasswordValid, isGithubLinkValid, isLinkedinLinkValid, isTwitterLinkValid, isLinkValid } = require("../utils/validation");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
@@ -88,7 +88,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid input")
     }
 
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email })
 
     if (!user) {
         throw new ApiError(404, "User not found")
@@ -169,8 +169,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
-
-    const user = await User.findById(req.user._id).select("_id name email avatar");
+    let user = req.user;
+    // console.log("getLoginUserDetails => ",user);
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -180,13 +180,12 @@ const getLoginUserDetails = asyncHandler(async (req, res) => {
 //Gate user profile
 const getUserProfile = asyncHandler(async (req, res) => {
     // const { identifier } = req.params;
-    const userId = req.user._id;
-    const user = await User.findById(userId).select("-password -refreshToken");
+    let user = req.user;
     if (!user) {
         throw new ApiError(404, "User not found")
     }
-    const userDetails= await UserDetails.findOne({ownerId:userId});
-    if(!userDetails){
+    const userDetails = await UserDetails.findOne({ ownerId: user._id });
+    if (!userDetails) {
         throw new ApiError(404, "User details not found")
     }
     const userProfile = {
@@ -264,7 +263,14 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
         throw new ApiError(400, "Invalid request")
     }
-    const user = await User.findById(userId).select("-password -refreshToken");
+    
+    let user=null;
+    if(req.user.googleId){
+        user = await GoogleUser.findById(req.user._id).select("_id name email avatar") ;
+    }
+    else{
+        user = await User.findById(req.user._id).select("_id name email avatar") ;
+    }
 
     if (!user) {
         if (localFilePath) {
@@ -272,8 +278,8 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
         throw new ApiError(404, "User not found")
     }
-    const userDetails= await UserDetails.findOne({ownerId:userId});
-    if(!userDetails){
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
         if (localFilePath) {
             fs.unlinkSync(localFilePath);
         }

@@ -3,12 +3,24 @@ const app = express();
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler.middleware')
 const cookieParser = require('cookie-parser')
+
 require('dotenv').config()
 //TODO - 
-const session = require('express-session');
+const { GoogleUser, UserDetails } = require('./models/user.model')
+const express_session = require('express-session');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
-const User = require("./models/user.model");
+const OAuth2Strategy = require("passport-google-oauth2").Strategy;
+
+
+app.use(express_session({
+    secret: "ghhhuy122",
+    resave: false,
+    saveUninitialized: true,
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 const corsOption = {
     origin: true,
     credentials: true  // Accept cookies
@@ -21,88 +33,72 @@ app.use(express.static("uploads"))
 app.use(cookieParser())
 
 //TODO -
-app.use(session({
-    secret: 'anything',
-    resave: false,
-    saveUninitialized: true
-}))
 
-app.use(passport.initialize())
-app.use(passport.session())
-
-// console.log(process.env.GOOGLE_CLIENT_ID);
-// console.log(process.env.GOOGLE_CLIENT_SECRET);
-
-passport.use(new GoogleStrategy({
+passport.use(new OAuth2Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback',
-    scope: ['email', 'profile']
+    scope: ['profile', 'email']
 },
-    async (request,accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
+        //  done(null, profile);
         try {
-            console.log(profile.email);
-            // console.log("accessToken", accessToken);
-            // console.log("refreshToken", refreshToken);
-            const user=await User.findOne({email:profile.email})
-            
-            if(!user){
+            // return done(null, profile);
+            let user = await GoogleUser.findOne({ googleId: profile.id });
+
+            if (!user) {
                 let currentTime = Date.now().toString();
                 let userName = profile.email.split('@')[0] + currentTime.substring(currentTime.length - 2);
-                const newUser = new User({
-                    name:profile.displayName,
-                    userName:userName,
-                    email:profile.email,
-                    password:profile.id,
-                    // organization:"N/A",
-                    // phone:"N/A",
-                    avatar:profile.picture,
-                    // role:"user"
+                user = await GoogleUser.create({
+                    googleId: profile.id,
+                    email: profile.email,
+                    name: profile.displayName,
+                    avatar: profile.picture,
                 })
-                await newUser.save()
+                const userDetails = await UserDetails.create({
+                    ownerId: user._id,
+                    userName: userName,
+                })
             }
             // console.log("user",user);
-            return done(null, user)
+            done(null, user)
         } catch (error) {
             return done(error, null)
         }
     }
 ))
 
-passport.serializeUser((user,done)=>{
-    done(null,user);
+passport.serializeUser((user, done) => {
+    // console.log("user => ",user._id);
+    // ("user",user);
+    done(null, user.id);
 })
 
-passport.deserializeUser((user,done)=>{
-    done(null,user);
+passport.deserializeUser(async (id, done) => {
+    try {
+        // console.log("DeserializeUser called with ID:", id);
+        const user = await GoogleUser.findById(id); // Fetch user from database
+        done(null, user);
+    } catch (error) {
+        return done(error, null);
+    }
 });
 
+
 // initial google ouath login
-app.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}));
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-app.get("/auth/google/callback",passport.authenticate("google",{
-    successRedirect:"http://localhost:3000/dashboard",
-    failureRedirect:"http://localhost:3000/sign-in"
+app.get("/auth/google/callback", passport.authenticate("google", {
+    successRedirect: "http://localhost:3000/dashboard",
+    failureRedirect: "http://localhost:3000/sign-in"
 }))
-
-// app.get("/users/me",async(req,res)=>{
-
-//     console.log("Sucess",req.user);
-//     if(req.user){
-        
-//         res.status(200).json({message:"user Login",user:req.user})
-//     }else{
-//         res.status(400).json({message:"Not Authorized"})
-//     }
-// })
 
 
 //routes import
 const userRouter = require('./routes/users.routes');
 const postRouter = require("./routes/post.route");
 const courseRouter = require('./routes/course.routes');
-// const User = require("./models/user.model");
-
+const ApiResponse = require("./utils/ApiResponse");
 //routes declaration
 app.use('/users', userRouter)
 app.use('/posts', postRouter)
