@@ -46,7 +46,7 @@ const deleteFromCloudinary = async (public_url) => {
     try {
         if (!public_url) return null
         const public_id = public_url.split('/').pop().split('.').shift();
-        console.log(public_id);
+        // console.log(public_id);
 
         configCloudinary();
         const res = await cloudinary.uploader.destroy(public_id);

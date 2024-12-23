@@ -16,6 +16,9 @@ app.use(express_session({
     secret: "ghhhuy122",
     resave: false,
     saveUninitialized: true,
+    cookie:{
+        secure:false        
+    }
 }))
 
 app.use(passport.initialize());

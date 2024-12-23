@@ -18,7 +18,7 @@ const isEmailValid = (email) => {
 }
 //phone number validator
 const isPhoneNumberValid = (phoneNumber) => {
-    console.log(phoneNumber);
+    // console.log(phoneNumber);
     
     const phoneNumberRegEx = /^[0-9]{10}$/;
     return phoneNumberRegEx.test(phoneNumber)||phoneNumber==="N/A";
