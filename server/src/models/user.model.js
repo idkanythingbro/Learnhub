@@ -19,8 +19,6 @@ const userDetailsSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        // required: true,
-        unique: true,
         trim: true,
         validate: {
             validator: isPhoneNumberValid,
@@ -145,16 +143,14 @@ const userSchema = new mongoose.Schema({
 })
 
 // userSchema.add(userDetailsSchema);
-const googleUserSchema = new mongoose.Schema({
-    googleId: {
+const OauthUserSchema = new mongoose.Schema({
+    oauthId: {
         type: String,
         required: true,
         unique: true,
     },
     email: {
         type: String,
-        required: true,
-        unique: true,
         lowercase: true,
         trim: true,
         validate: {
@@ -244,7 +240,7 @@ userSchema.methods.generateRefreshToken = async function () {
 }
 
 const User = mongoose.model("User", userSchema);
-const GoogleUser = mongoose.model("GoogleUser", googleUserSchema);
+const OauthUser = mongoose.model("OauthUser", OauthUserSchema);
 const UserDetails = mongoose.model("UserDetails", userDetailsSchema);
 
-module.exports = { User, GoogleUser, UserDetails };
+module.exports = { User, OauthUser, UserDetails };

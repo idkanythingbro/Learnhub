@@ -36,7 +36,7 @@ export const registerUser = (userData, navigate) => async (_) => {
 //     }
 // }
 
-export const loginUser = (userData, navigate) => async (dispatch) => {
+export const loginUser = (userData) => async (dispatch) => {
     const toastId = toast.loading("Logging in...", {
         autoClose: 1000 * 60 * 10
     })
@@ -47,7 +47,7 @@ export const loginUser = (userData, navigate) => async (dispatch) => {
         if (response.data.success) {
             toast.dismiss(toastId)
             dispatch(getLoginUserDetails());
-            navigate("/");
+            window.location.href = "/dashboard";
 
         }
     } catch (error) {
@@ -56,13 +56,13 @@ export const loginUser = (userData, navigate) => async (dispatch) => {
     }
 }
 
-export const logoutUser = (navigate) => async (dispatch) => {
+export const logoutUser = () => async (dispatch) => {
     try {
         const response = await axios.get(`${userApiRout}/logout/`, {
             withCredentials: true
         });
         if (response.data.success) {
-            navigate("/sign-in");
+            window.location.href = "/sign-in";
             dispatch(setLoginUser(null));
         }
     } catch (error) {

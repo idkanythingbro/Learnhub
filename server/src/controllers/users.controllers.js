@@ -4,7 +4,7 @@ const ApiError = require("../utils/ApiErrors");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadFileToCloudinary, deleteFromCloudinary } = require("../service/cloudinary.service");
-const { User, UserDetails, GoogleUser } = require("../models/user.model");
+const { User, UserDetails, OauthUser } = require("../models/user.model");
 const { isFileSizeValid, isEmailValid, isPhoneNumberValid, isPasswordValid, isGithubLinkValid, isLinkedinLinkValid, isTwitterLinkValid, isLinkValid } = require("../utils/validation");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
@@ -137,6 +137,8 @@ const logoutUser = asyncHandler(async (req, res) => {
         .clearCookie(refreshTokenCookieName, cookieOption)
         .clearCookie("connect.sid", cookieOption)
         .json(new ApiResponse(200, {}, "User logged Out"))
+       
+        
 })
 //Refresh access token
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -266,8 +268,8 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
     
     let user=null;
-    if(req.user.googleId){
-        user = await GoogleUser.findById(req.user._id).select("_id name email avatar") ;
+    if(req.user.oauthId){
+        user = await OauthUser.findById(req.user._id).select("_id name email avatar") ;
     }
     else{
         user = await User.findById(req.user._id).select("_id name email avatar") ;

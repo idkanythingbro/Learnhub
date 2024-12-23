@@ -17,7 +17,7 @@ const NavBar = ({ user }) => {
     navigate("/sign-up");
   }
   const handelSignOut = () => {
-    dispatch(logoutUser(navigate));
+    dispatch(logoutUser());
   };
 
   if (!user) {

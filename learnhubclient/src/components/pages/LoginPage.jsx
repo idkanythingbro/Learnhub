@@ -12,17 +12,18 @@ const LoginPage = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     // console.log(email, password);
-    dispatch(loginUser({ email, password }, navigate));
+    dispatch(loginUser({ email, password }));
 
   };
 
-  //FIXME - 
   const loginwithgoogle = () => {
     // alert("Login with Google")
     window.open("http://localhost:5001/auth/google/callback", "_self")
   }
-  //FIXME - 
-
+const loginwithgithub = () => {
+    // alert("Login with Github")
+    window.open("http://localhost:5001/login/oauth/authorize", "_self")
+  }
   return (
     <div>
       <nav className="bg-[#ffad33] shadow-2xl border-gray-200 dark:bg-gray-900">
@@ -120,7 +121,7 @@ const LoginPage = () => {
             </p>
           </form>
           <Label className="text-lg">Our Other Sign in Options</Label>
-          <button className="flex cursor-pointer gap-3 rounded-full border border-gray-600 bg-gradient-to-r from-gray-800 to-black px-7 py-3 font-semibold text-white duration-200 hover:scale-105 hover:border-gray-800 hover:from-black hover:to-gray-900 hover:text-gray-500">
+          <button onClick={loginwithgithub} className="flex cursor-pointer gap-3 rounded-full border border-gray-600 bg-gradient-to-r from-gray-800 to-black px-7 py-3 font-semibold text-white duration-200 hover:scale-105 hover:border-gray-800 hover:from-black hover:to-gray-900 hover:text-gray-500">
             <svg
               viewBox="0 0 24 24"
               height="24"

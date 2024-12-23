@@ -3,26 +3,15 @@ const app = express();
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler.middleware')
 const cookieParser = require('cookie-parser')
-
 require('dotenv').config()
-//TODO - 
-const { GoogleUser, UserDetails } = require('./models/user.model')
+const { OauthUser, UserDetails } = require('./models/user.model')
 const express_session = require('express-session');
 const passport = require('passport');
-const OAuth2Strategy = require("passport-google-oauth2").Strategy;
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
+const GithubStrategy = require('passport-github2').Strategy;
 
 
-app.use(express_session({
-    secret: "ghhhuy122",
-    resave: false,
-    saveUninitialized: true,
-    cookie:{
-        secure:false        
-    }
-}))
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 const corsOption = {
     origin: true,
@@ -35,9 +24,20 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static("uploads"))
 app.use(cookieParser())
 
-//TODO -
+app.use(express_session({
+    secret: "ghhhuy122",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false
+    }
+}))
 
-passport.use(new OAuth2Strategy({
+app.use(passport.initialize());
+app.use(passport.session());
+
+//SECTION -  - Google Oauth
+passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback',
@@ -47,13 +47,13 @@ passport.use(new OAuth2Strategy({
         //  done(null, profile);
         try {
             // return done(null, profile);
-            let user = await GoogleUser.findOne({ googleId: profile.id });
+            let user = await OauthUser.findOne({ oauthId: profile.id });
 
             if (!user) {
                 let currentTime = Date.now().toString();
                 let userName = profile.email.split('@')[0] + currentTime.substring(currentTime.length - 2);
-                user = await GoogleUser.create({
-                    googleId: profile.id,
+                user = await OauthUser.create({
+                    oauthId: profile.id,
                     email: profile.email,
                     name: profile.displayName,
                     avatar: profile.picture,
@@ -71,8 +71,41 @@ passport.use(new OAuth2Strategy({
     }
 ))
 
+//NOTE - Github Oauth
+passport.use(new GithubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "/login/oauth/authorize",
+    // scope: ['profile', 'email']
+},
+    async (accessToken, refreshToken, profile, done) =>{
+        try {
+            // console.log("profile", profile);
+            let user = await OauthUser.findOne({ oauthId: profile.id });
+
+            if (!user) {
+                user = await OauthUser.create({
+                    oauthId: profile.id,
+                    name: profile.displayName||profile.nodeId,
+                    avatar: profile.photos[0].value,
+                });
+
+                const userDetails = await UserDetails.create({
+                    ownerId: user._id,
+                    userName: profile.username,
+                })
+                console.log("user",userDetails);
+            }
+
+            done(null, user)
+        } catch (error) {
+            return done(error, null)
+        }
+    }
+));
+
 passport.serializeUser((user, done) => {
-    // console.log("user => ",user._id);
+    // console.log("user => ",user.id);
     // ("user",user);
     done(null, user.id);
 })
@@ -80,7 +113,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
     try {
         // console.log("DeserializeUser called with ID:", id);
-        const user = await GoogleUser.findById(id); // Fetch user from database
+        const user = await OauthUser.findById(id); // Fetch user from database
         done(null, user);
     } catch (error) {
         return done(error, null);
@@ -96,6 +129,25 @@ app.get("/auth/google/callback", passport.authenticate("google", {
     failureRedirect: "http://localhost:3000/sign-in"
 }))
 
+//SECTION - Github Oauth
+// passport.use(new GithubStrategy({
+//     clientID: process.env.GITHUB_CLIENT_ID,
+//     clientSecret: process.env.GITHUB_CLIENT_SECRET,
+//     callbackURL: "/login/oauth/authorize"
+// },
+//     function (accessToken, refreshToken, profile, done) {
+//         console.log("profile", profile);
+//         done(null, profile);
+//     }
+// ));
+
+app.get('/login/oauth', passport.authenticate('github'));
+
+app.get('/login/oauth/authorize', passport.authenticate('github', {
+    successRedirect: "http://localhost:3000/dashboard",
+    failureRedirect: "http://localhost:3000/sign-in"
+
+}));
 
 //routes import
 const userRouter = require('./routes/users.routes');
