@@ -11,16 +11,13 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../service/user.service";
 
 const NavBar = ({ user }) => {
-  console.log(user);
-  
-
   const navigate = useNavigate();
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   function signUp() {
     navigate("/sign-up");
   }
   const handelSignOut = () => {
-   dispatch(logoutUser());
+    dispatch(logoutUser(navigate));
   };
 
   if (!user) {

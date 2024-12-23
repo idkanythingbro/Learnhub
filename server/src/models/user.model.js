@@ -4,27 +4,10 @@ const jwt = require("jsonwebtoken");
 const { isEmailValid, isPhoneNumberValid, isPasswordValid } = require("../utils/validation");
 const generateOtp = require("../utils/generatOtp");
 const Otp = require("./otp.models");
-
-const userSchema = new mongoose.Schema({
-    // firstName: {
-    //     type: String,
-    //     required: true,
-    //     trim: true,
-    // },
-    // lastName: {
-    //     type: String,
-    //     required: true,
-    //     trim: true,
-    // },
-    name:{
-        type: String,
+const userDetailsSchema = new mongoose.Schema({
+    ownerId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        trim: true,
-    },
-    organization: {
-        type: String,
-        required: true,
-        trim: true,
     },
     userName: {
         type: String,
@@ -34,20 +17,9 @@ const userSchema = new mongoose.Schema({
         trim: true,
         index: true
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-        validate: {
-            validator: isEmailValid,
-            message: props => `${props.value} is not a valid email number!`
-        },
-    },
     phone: {
         type: String,
-        required: true,
+        // required: true,
         unique: true,
         trim: true,
         validate: {
@@ -55,14 +27,10 @@ const userSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid phone number!`
         },
     },
-    password: {
+    organization: {
         type: String,
-        required: [true, "Password is required"],
-        minlength: [4, "Password must be at least 4 characters long"],
-    },
-    avatar: {
-        type: String, // cloudinary url
-        default: null
+        // required: true,
+        trim: true,
     },
     description: {
         type: String,
@@ -128,6 +96,80 @@ const userSchema = new mongoose.Schema({
         ],
         default: []
     },
+
+})
+
+const userSchema = new mongoose.Schema({
+    // firstName: {
+    //     type: String,
+    //     required: true,
+    //     trim: true,
+    // },
+    // lastName: {
+    //     type: String,
+    //     required: true,
+    //     trim: true,
+    // },
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        validate: {
+            validator: isEmailValid,
+            message: props => `${props.value} is not a valid email number!`
+        },
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        minlength: [4, "Password must be at least 4 characters long"],
+    },
+    avatar: {
+        type: String, // cloudinary url
+        default: null
+    },
+    refreshToken: {
+        type: String,
+        default: null
+    },
+}, {
+    timestamps: true
+})
+
+// userSchema.add(userDetailsSchema);
+const googleUserSchema = new mongoose.Schema({
+    googleId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        validate: {
+            validator: isEmailValid,
+            message: props => `${props.value} is not a valid email number!`
+        },
+    },
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    avatar: {
+        type: String, //google avatar
+        default: null
+    },
     refreshToken: {
         type: String,
         default: null
@@ -179,9 +221,7 @@ userSchema.methods.generateAccessToken = async function () {
     return jwt.sign(
         {
             _id: this._id,
-            userName: this.userName,
             email: this.email,
-            role: this.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -203,5 +243,7 @@ userSchema.methods.generateRefreshToken = async function () {
 }
 
 const User = mongoose.model("User", userSchema);
+const GoogleUser = mongoose.model("GoogleUser", googleUserSchema);
+const UserDetails = mongoose.model("UserDetails", userDetailsSchema);
 
-module.exports = User;
+module.exports = { User, GoogleUser, UserDetails };

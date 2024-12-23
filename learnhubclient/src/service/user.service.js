@@ -56,12 +56,13 @@ export const loginUser = (userData, navigate) => async (dispatch) => {
     }
 }
 
-export const logoutUser = () => async (dispatch) => {
+export const logoutUser = (navigate) => async (dispatch) => {
     try {
         const response = await axios.get(`${userApiRout}/logout/`, {
             withCredentials: true
         });
         if (response.data.success) {
+            navigate("/sign-in");
             dispatch(setLoginUser(null));
         }
     } catch (error) {
@@ -72,10 +73,14 @@ export const logoutUser = () => async (dispatch) => {
 let refreshCnt = 0;
 export const getLoginUserDetails = () => async (dispatch) => {
     try {
+        console.log("getLoginUserDetails");
+        
         const response = await axios.get(`${userApiRout}/me`, {
             withCredentials: true
         });
         if (response.data.success) {
+            console.log("getLoginUserDetails",response.data.data);
+            
             dispatch(setLoginUser(response.data.data));
             refreshCnt = 0;
         }

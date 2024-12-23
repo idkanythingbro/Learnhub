@@ -16,12 +16,14 @@ const { registerUser,
 } = require('../controllers/users.controllers');
 const upload = require('../middleware/multer.middleware');
 const { jwtVerify } = require('../middleware/auth.middleware');
+const ApiResponse = require('../utils/ApiResponse');
 
 router.get("/", jwtVerify, getLoggedInUserPost)
 router.post('/register', upload.single("avatar"), registerUser);
 // router.post('/active-account', activeAccount);
 // router.post("/sendOtp", sendOtpControllers);
 router.post('/login', loginUser);
+// router.
 router.get('/logout', jwtVerify, logoutUser);
 router.get("/refresh-access-token", refreshAccessToken)
 router.get('/me', jwtVerify, getLoginUserDetails);
@@ -32,6 +34,16 @@ router.put("/unfollow", jwtVerify, unfollow);
 router.get("/profile",jwtVerify, getUserProfile);
 
 //TODO - Google login
+// router.get("/me",async(req,res)=>{
+
+//     console.log("Sucess",req);
+//         if(req.user){
+            
+//             res.status(200).json(new ApiResponse(200,"user Login",req.user))
+//         }else{
+//             res.status(400).json({message:"Not Authorized"})
+//         }
+//     })
 
 
 module.exports = router;

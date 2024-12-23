@@ -4,7 +4,7 @@ const ApiError = require("../utils/ApiErrors");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadFileToCloudinary, deleteFromCloudinary } = require("../service/cloudinary.service");
-const User = require("../models/user.model");
+const {User,UserDetails} = require("../models/user.model");
 const { isFileSizeValid, isEmailValid, isPhoneNumberValid, isPasswordValid, isGithubLinkValid, isLinkedinLinkValid, isTwitterLinkValid, isLinkValid } = require("../utils/validation");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
@@ -50,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (password !== confirmpassword) {
         throw new ApiError(400, "Password and confirm password must be same")
     }
-    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
         throw new ApiError(400, "User already exists")
     }
@@ -60,18 +60,21 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const user = await User.create({
         name: `${firstname} ${lastname}`,
-        userName,
         email,
-        phone,
-        organization,
         password,
     });
+    const userDetails = await UserDetails.create({
+        ownerId: user._id,
+        phone,
+        organization,
+        userName
+    })
 
     res.status(201).json(new ApiResponse(
         201,
         {
             id: user._id,
-            userName: user.userName
+            userName: userDetails.userName
         },
         "User registered successfully"
     ));
@@ -80,28 +83,21 @@ const registerUser = asyncHandler(async (req, res) => {
 // Login controller
 const loginUser = asyncHandler(async (req, res) => {
     // Add your code here
-    const { email, userName, phone, password } = req.body
-    if (!(email || userName || phone)) {
+    const { email, password } = req.body
+    if (!(email && password)) {
         throw new ApiError(400, "Invalid input")
     }
 
-    const user = await User.findOne({
-        $or: [{ userName }, { email }, { phone }]
-    })
-    // console.log(user);
+    const user = await User.findOne({email})
 
     if (!user) {
         throw new ApiError(404, "User not found")
     }
-    // if (!user.isActive) {
-    //     throw new ApiError(400, "Your account is not activated")
-    // }
     const isMatch = await user.isPasswordCorrect(password);
     if (!isMatch) {
         throw new ApiError(401, "Invalid credentials")
     }
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id)
-    // const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     return res.status(200)
         .cookie(accessTokenCookieName, accessToken, accessTokenCookieOption)
@@ -174,7 +170,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
 
-    const user = await User.findById(req.user._id).select("_id userName name organization  email phone avatar");
+    const user = await User.findById(req.user._id).select("_id name email avatar");
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -189,7 +185,15 @@ const getUserProfile = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User not found")
     }
-    res.status(200).json(new ApiResponse(200, user, "User details fetched successfully"))
+    const userDetails= await UserDetails.findOne({ownerId:userId});
+    if(!userDetails){
+        throw new ApiError(404, "User details not found")
+    }
+    const userProfile = {
+        ...user.toObject(),
+        ...userDetails.toObject()
+    }
+    res.status(200).json(new ApiResponse(200, userProfile, "User details fetched successfully"))
 })
 
 //Update password
@@ -268,6 +272,14 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
         throw new ApiError(404, "User not found")
     }
+    const userDetails= await UserDetails.findOne({ownerId:userId});
+    if(!userDetails){
+        if (localFilePath) {
+            fs.unlinkSync(localFilePath);
+        }
+        throw new ApiError(500, "User not found")
+
+    }
 
     if (localFilePath) {
         const oldAvatar = user.avatar;
@@ -279,13 +291,18 @@ const updateProfile = asyncHandler(async (req, res) => {
 
     if (name) user.name = name;
     if (email && isEmailValid(email)) user.email = email;
-    if (phone && isPhoneNumberValid(phone)) user.phone = phone;
-    if (description) user.description = description;
-    if (organization) user.organization = organization;
-    if (location) user.location = location;
-    if (designation) user.designation = designation;
+    if (phone && isPhoneNumberValid(phone)) userDetails.phone = phone;
+    if (description) userDetails.description = description;
+    if (organization) userDetails.organization = organization;
+    if (location) userDetails.location = location;
+    if (designation) userDetails.designation = designation;
     await user.save({ validateModifiedOnly: true });
-    res.status(200).json(new ApiResponse(200, user, "Profile updated successfully"));
+    await userDetails.save({ validateModifiedOnly: true });
+    const userProfile = {
+        ...user.toObject(),
+        ...userDetails.toObject()
+    }
+    res.status(200).json(new ApiResponse(200, userProfile, "Profile updated successfully"));
 })
 
 //Follow
