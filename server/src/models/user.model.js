@@ -41,7 +41,8 @@ const userDetailsSchema = new mongoose.Schema({
     },
     designation: {
         type: String,
-        default: ""
+        enum: ["student", "teacher"],
+        default: "student"
     },
 
     post: {

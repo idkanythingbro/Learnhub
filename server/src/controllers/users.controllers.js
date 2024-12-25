@@ -137,9 +137,10 @@ const logoutUser = asyncHandler(async (req, res) => {
         .clearCookie(refreshTokenCookieName, cookieOption)
         .clearCookie("connect.sid", cookieOption)
         .json(new ApiResponse(200, {}, "User logged Out"))
-       
-        
+
+
 })
+
 //Refresh access token
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const requestRefreshToken = req.cookies.refreshToken;
@@ -173,7 +174,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
     let user = req.user;
-    // console.log("getLoginUserDetails => ",user);
     if (!user) {
         throw new ApiError(404, "User not found")
     }
@@ -247,8 +247,28 @@ const updateProfile = asyncHandler(async (req, res) => {
         location,
         designation,
     } = req.body;
-    const userId = req.user._id;
 
+    //NOTE - check if user is logged in
+    const userId = req.user._id;
+    if (!userId) {
+        if (localFilePath) {
+            fs.unlinkSync(localFilePath);
+        }
+        throw new ApiError(400, "Invalid request")
+    }
+    //NOTE - Check if designation is valid
+    if (designation) {
+        designation = designation.toLowerCase();
+        const designationList = ["student", "teacher"];
+        if (!designationList.includes(designation)) {
+            if (localFilePath) {
+                fs.unlinkSync(localFilePath);
+                throw new ApiError(400, "Invalid designation")
+            }
+        }
+    }
+
+    //NOTE - Check if file is valid
     let localFilePath = null;
     if (req.file) {
         const file = req.file;
@@ -260,19 +280,13 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
     }
 
-    if (!userId) {
-        if (localFilePath) {
-            fs.unlinkSync(localFilePath);
-        }
-        throw new ApiError(400, "Invalid request")
+    //NOTE - get user details
+    let user = null;
+    if (req.user.oauthId) {
+        user = await OauthUser.findById(req.user._id).select("_id name email avatar");
     }
-    
-    let user=null;
-    if(req.user.oauthId){
-        user = await OauthUser.findById(req.user._id).select("_id name email avatar") ;
-    }
-    else{
-        user = await User.findById(req.user._id).select("_id name email avatar") ;
+    else {
+        user = await User.findById(req.user._id).select("_id name email avatar");
     }
 
     if (!user) {
@@ -290,6 +304,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
     }
 
+    //NOTE - Update user profile
     if (localFilePath) {
         const oldAvatar = user.avatar;
         user.avatar = await uploadFileToCloudinary(localFilePath, "auto", "Profile photo");
@@ -297,6 +312,8 @@ const updateProfile = asyncHandler(async (req, res) => {
             await deleteFromCloudinary(oldAvatar);
         }
     }
+
+
 
     if (name) user.name = name;
     if (email && isEmailValid(email)) user.email = email;
