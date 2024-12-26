@@ -78,7 +78,7 @@ passport.use(new GithubStrategy({
     callbackURL: "/login/oauth/authorize",
     // scope: ['profile', 'email']
 },
-    async (accessToken, refreshToken, profile, done) =>{
+    async (accessToken, refreshToken, profile, done) => {
         try {
             // console.log("profile", profile);
             let user = await OauthUser.findOne({ oauthId: profile.id });
@@ -86,7 +86,7 @@ passport.use(new GithubStrategy({
             if (!user) {
                 user = await OauthUser.create({
                     oauthId: profile.id,
-                    name: profile.displayName||profile.nodeId,
+                    name: profile.displayName || profile.nodeId,
                     avatar: profile.photos[0].value,
                 });
 
@@ -94,7 +94,7 @@ passport.use(new GithubStrategy({
                     ownerId: user._id,
                     userName: profile.username,
                 })
-                console.log("user",userDetails);
+                // console.log("user", userDetails);
             }
 
             done(null, user)
@@ -128,18 +128,6 @@ app.get("/auth/google/callback", passport.authenticate("google", {
     successRedirect: "http://localhost:3000/dashboard",
     failureRedirect: "http://localhost:3000/sign-in"
 }))
-
-//SECTION - Github Oauth
-// passport.use(new GithubStrategy({
-//     clientID: process.env.GITHUB_CLIENT_ID,
-//     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-//     callbackURL: "/login/oauth/authorize"
-// },
-//     function (accessToken, refreshToken, profile, done) {
-//         console.log("profile", profile);
-//         done(null, profile);
-//     }
-// ));
 
 app.get('/login/oauth', passport.authenticate('github'));
 
