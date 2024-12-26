@@ -1,0 +1,10 @@
+export { default as Home } from "./Home";
+export { default as Certificates } from "./Certificates";
+export { default as CreateCourse } from "./CreateCourse";
+export { default as Dashboard } from "./Dashboard";
+export { default as Explore } from "./Explore";
+export { default as MyLearnings } from "./MyLearnings";
+export { default as Profile } from "./Profile";
+export { default as Settings } from "./Settings";
+export { default as Social } from "./Social";
+export { default as UpdateProfile } from "./UpdateProfile";

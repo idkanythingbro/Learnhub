@@ -1,0 +1,63 @@
+import { Routes, Route } from "react-router-dom";
+import SigninForm from "./_auth/forms/SigninForm";
+import SignupForm from "./_auth/forms/SignupForm";
+import Home from "./_root/pages/Home";
+import AuthLayout from "./_auth/AuthLayout";
+import RootLayout from "./_root/RootLayout";
+import HomeLayout from "./components/HomeLayout";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getLoginUserDetails } from "./service/user.service";
+import {
+  Certificates,
+  CreateCourse,
+  Dashboard,
+  Explore,
+  MyLearnings,
+  Profile,
+  Settings,
+  Social,
+  UpdateProfile,
+} from "./_root/pages";
+
+const App = () => {
+  const loggedInUserData = useSelector((state) => state.userReducer.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getLoginUserDetails());
+  }, []);
+
+  useEffect(() => {
+    console.log(loggedInUserData);
+  }, [loggedInUserData]);
+  return (
+    <main className="relative min-h-screen w-screen overflow-x-hidden">
+      <Routes>
+        <Route index element={<HomeLayout />} />
+        {/* public routes */}
+        <Route element={<AuthLayout />}>
+          <Route path="/sign-in" element={<SigninForm />} />
+          <Route path="/sign-up" element={<SignupForm />} />
+        </Route>
+        {/* private routes */}
+        <Route element={<RootLayout />}>
+          {/* dashboard is to be changed to home */}
+          <Route path="/dashboard" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          {/* //change dashborad url to /dashboard later */}
+          <Route path="/dash" element={<Dashboard />} />
+          <Route path="/mylearnings" element={<MyLearnings />} />
+          <Route path="/certificates" element={<Certificates />} />
+          <Route path="/createcourse" element={<CreateCourse />} />
+          <Route path="/social" element={<Social />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/updateprofile/:id/*" element={<Profile />} />
+          <Route path="/updateprofile/:id" element={<UpdateProfile />} />
+        </Route>
+      </Routes>
+    </main>
+  );
+};
+
+export default App;
