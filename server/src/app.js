@@ -132,7 +132,7 @@ app.get("/auth/google/callback", passport.authenticate("google", {
 app.get('/login/oauth', passport.authenticate('github'));
 
 app.get('/login/oauth/authorize', passport.authenticate('github', {
-    successRedirect: "http://localhost:3000/dashboard",
+    successRedirect: "http://localhost:3000/home",
     failureRedirect: "http://localhost:3000/sign-in"
 
 }));
