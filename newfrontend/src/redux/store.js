@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer  from './reducer/auth.reducer'
+import userReducer  from './reducer/user.reducer'
 import themeReducer from './reducer/mode.reducer'
 import postReducer from "./reducer/post.reducer";
 export const store =configureStore({

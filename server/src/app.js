@@ -96,6 +96,7 @@ passport.use(new GithubStrategy({
                 })
                 // console.log("user", userDetails);
             }
+            // console.log("user", user);
 
             done(null, user)
         } catch (error) {
@@ -125,7 +126,7 @@ passport.deserializeUser(async (id, done) => {
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/dashboard",
+    successRedirect: "http://localhost:3000/home",
     failureRedirect: "http://localhost:3000/sign-in"
 }))
 

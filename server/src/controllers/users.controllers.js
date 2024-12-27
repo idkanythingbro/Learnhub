@@ -226,6 +226,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 //Gate login user details
 const getLoginUserDetails = asyncHandler(async (req, res) => {
   let user = req.user;
+  // console.log(user);
+  
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -238,6 +240,8 @@ const getLoginUserDetails = asyncHandler(async (req, res) => {
 const getUserProfile = asyncHandler(async (req, res) => {
   // const { identifier } = req.params;
   let user = req.user;
+  // console.log(user);
+  
   if (!user) {
     throw new ApiError(404, "User not found");
   }

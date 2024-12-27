@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { errorToast } from "../utils/errorToast";
-import { setLoginUser } from "../redux/reducer/auth.reducer";
+import { setLoginUser, setProfile } from "../redux/reducer/user.reducer";
 import { userApiRout } from "../assets/constant";
 
 export const registerUser = (userData, navigate) => async (_) => {
@@ -72,10 +72,14 @@ export const logoutUser = () => async (dispatch) => {
 let refreshCnt = 0;
 export const getLoginUserDetails = () => async (dispatch) => {
   try {
+    console.log("getLoginUserDetails", userApiRout);
+
     const response = await axios.get(`${userApiRout}/me`, {
       withCredentials: true,
     });
+    // console.log("user", response);
     if (response.data.success) {
+
       dispatch(setLoginUser(response.data.data));
       refreshCnt = 0;
     }
@@ -105,14 +109,17 @@ export const getLoginUserDetails = () => async (dispatch) => {
   }
 };
 
-export const getProfile = async (userName, id) => {
+export const getProfile = (id) => async (dispatch) => {
   try {
-    if (!userName && !id) {
+    if (!id) {
       return null;
     }
-    let identifier = userName || id;
-    const response = await axios.get(`${userApiRout}/${identifier}`);
+    // let identifier = userName || id;
+    const response = await axios.get(`${userApiRout}/profile`,{
+      withCredentials: true,
+    });
     if (response.data.success) {
+      dispatch(setProfile(response.data.data));
       return response.data.data;
     }
     return null;

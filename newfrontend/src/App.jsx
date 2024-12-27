@@ -52,7 +52,7 @@ const App = () => {
           <Route path="/createcourse" element={<CreateCourse />} />
           <Route path="/social" element={<Social />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/updateprofile/:id/*" element={<Profile />} />
+          <Route path="/updateprofile" element={<Profile />} />
           <Route path="/updateprofile/:id" element={<UpdateProfile />} />
         </Route>
       </Routes>
