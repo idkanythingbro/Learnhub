@@ -42,17 +42,15 @@ const App = () => {
         </Route>
         {/* private routes */}
         <Route element={<RootLayout />}>
-          {/* dashboard is to be changed to home */}
           <Route path="/home" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
-          {/* //change dashborad url to /dashboard later */}
-          <Route path="/dash" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/mylearnings" element={<MyLearnings />} />
           <Route path="/certificates" element={<Certificates />} />
           <Route path="/createcourse" element={<CreateCourse />} />
           <Route path="/social" element={<Social />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/updateprofile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/updateprofile/:id" element={<UpdateProfile />} />
         </Route>
       </Routes>

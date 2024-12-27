@@ -15,7 +15,7 @@ const Profile = () => {
   useEffect(() => {
     // console.log(loggedInUserData);
     if (loggedInUserData) {
-     dispatch(getProfile(loggedInUserData._id));
+      dispatch(getProfile(loggedInUserData._id));
     }
     // getProfile(loggedInUserData._id);
   }, [loggedInUserData]);
@@ -24,8 +24,7 @@ const Profile = () => {
     console.log(profileData);
 
     setProfile(profileData);
-
-  }, [profileData])
+  }, [profileData]);
   return <div>Profile</div>;
 };
 
