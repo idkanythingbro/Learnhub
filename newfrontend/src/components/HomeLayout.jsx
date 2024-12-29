@@ -5,7 +5,7 @@ import NavBar from "./shared/Navbar";
 
 const HomeLayout = () => {
   return (
-    <div>
+    <div className="relative min-h-screen w-screen overflow-x-hidden bg-white">
       <NavBar />
       <Hero />
       <About />
