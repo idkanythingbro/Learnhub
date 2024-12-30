@@ -8,3 +8,4 @@ export { default as Profile } from "./Profile";
 export { default as Settings } from "./Settings";
 export { default as Social } from "./Social";
 export { default as UpdateProfile } from "./UpdateProfile";
+export { default as CourseProfile } from "./CourseProfile";

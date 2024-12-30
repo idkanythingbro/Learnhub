@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLoginUserDetails } from "./service/user.service";
 import {
   Certificates,
+  CourseProfile,
   CreateCourse,
   Dashboard,
   Explore,
@@ -50,7 +51,8 @@ const App = () => {
           <Route path="/social" element={<Social />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/updateprofile/:id" element={<UpdateProfile />} />
+          <Route path="/updateprofile" element={<UpdateProfile />} />
+          <Route path="/courseprofile" element={<CourseProfile />} />
         </Route>
       </Routes>
     </main>

@@ -33,12 +33,15 @@ const FileUploader = ({ fieldChange }) => {
           <div className="file_uploader-box ">
             <div className="object-contain">
               {file[0].type === "video/mp4" ? (
-                <video src={dataURL} className="p-7 h-80 lg:h-[412px] " />
+                <video
+                  src={dataURL}
+                  className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
+                />
               ) : (
                 <img
                   src={dataURL}
                   alt="file upload"
-                  className="p-7 h-80 lg:h-[412px]"
+                  className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
                 />
               )}
             </div>
