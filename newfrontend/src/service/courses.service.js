@@ -1,9 +1,12 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+import {setCourseLoading, setCourses, setCourseSuccess} from "../redux/reducer/course.reducer";
 
 const baseUrl = import.meta.env.VITE_SERVER_BASE_URL
 export const createNewCourse = async (courseData) => {
+    const tostId=toast.loading("Creating ...");
     try {
-        console.log(courseData);
+        // console.log(courseData);
 
         const formData = new FormData();
         formData.append('courseName', courseData.courseName);
@@ -18,22 +21,29 @@ export const createNewCourse = async (courseData) => {
             withCredentials: true
         })
 
-        console.log("D", response.data);
-
-
+        toast.dismiss(tostId);
+        toast.success("Course created successfully");
+        // console.log("D", response.data);
     } catch (error) {
+        toast.dismiss(tostId);
         console.log(error);
 
     }
 
 };
 
-export const getAllCourses = async () => {
+export const getAllCourses =()=> async (dispatch) => {
     try {
+        dispatch(setCourseLoading(true));
         const response = await axios.get(`${baseUrl}/courses`, {
             withCredentials: true
         });
-        console.log(response.data.data);
+        dispatch(setCourseLoading(false));
+        dispatch(setCourses(response.data.data));
+        dispatch(setCourseSuccess(true));
+        
+
+        // console.log(response.data.data);
 
         return response.data;
 

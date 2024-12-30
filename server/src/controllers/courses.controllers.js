@@ -194,7 +194,7 @@ const getAllCourses = asyncHandler(async (req, res) => {
         path: "owner",
         select: "name email"
     });
-    console.log(courses);
+    // console.log(courses);
 
     res.status(200).json(new ApiResponse(
         200,

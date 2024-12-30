@@ -75,6 +75,10 @@ const courseSchema = new Schema({
         type: String,
         default: 'None'
     },
+    likes: {
+        type: [mongoose.Schema.Types.ObjectId],
+        default: []
+    },
 
 }, {
     timestamps: true

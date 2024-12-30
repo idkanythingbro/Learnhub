@@ -19,7 +19,7 @@ const CourseCard = ({ course }) => {
           </Link>
           <div className="flex flex-col">
             <p className="text-light-4 small-regular">
-              created by {course.createdBy}
+              created by {course.owner?.name}
             </p>
             <p className="text-light-4 small-regular mb-6">
               {timeAgo(course.createdAt)}
@@ -32,7 +32,7 @@ const CourseCard = ({ course }) => {
           </div>
         </div>
       </div>
-      <LikeButton likes={course.likes} />
+      <LikeButton likes={course.likes?.length} />
     </div>
   );
 };
