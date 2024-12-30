@@ -24,30 +24,16 @@ const deleteFiles = (files) => {
 //SECTION - Course
 const createNewCourse = asyncHandler(async (req, res) => {
     // console.log(req.body);
-    const { courseTitle, courseSubtitle, courseDescription, targetAudience, courseLevel, learningObjectives, courseRequirements, courseLanguage, instructorBio, courseCategory } = req.body;
-    const coursePrice = Number(req.body.coursePrice);
-    const topics = [];
-    for (let i = 0; i < req.body.topics.length; i++) {
-        const topic = Object.assign({}, req.body.topics[i]);
-        topics.push(topic);
-    }
+    const { courseName, description, prerequsite } = req.body;
+    // const coursePrice = Number(req.body.coursePrice);
 
-    const coursePoster = req.files.find(file => file.fieldname === 'courseImage');
-    const promotionalVideo = req.files.find(file => file.fieldname === 'promotionalVideo');
+    const poster = req.files.find(file => file.fieldname === 'poster');
+    const introVideo = req.files.find(file => file.fieldname === 'introVideo');
 
-    // Handle topics file uploads
-    const topicsFiles = req.files.filter(file => file.fieldname.startsWith('topics['));
-    //Check course Required fields
     const requiredFields = {
-        courseTitle: "Course title",
-        courseDescription: "Course description",
-        targetAudience: "Target audience",
-        courseLevel: "Course level",
-        learningObjectives: "Learning objectives",
-        courseRequirements: "Course requirements",
-        courseLanguage: "Course language",
-        courseCategory: "Course category",
-        topics: "Topics"
+        courseName: "Course Name",
+        description: "Course description",
+        prerequsite: "Course Prerequsite",
     };
 
     for (const [field, message] of Object.entries(requiredFields)) {
@@ -58,105 +44,58 @@ const createNewCourse = asyncHandler(async (req, res) => {
         }
     }
 
-    if (!coursePoster) {
+    if (!poster) {
         deleteFiles(req.files);
         res.status(400);
         throw new ApiError(400, "Course poster is required");
     }
 
-    //NOTE - Give validation for file size 
-
-    //STUB - Check  topics are valid or not
-    if (topics.length === 0) {
+    if (poster.size > 2 * 1024 * 1024) { //NOTE - Give valid for file size
         deleteFiles(req.files);
         res.status(400);
-        throw new ApiError(400, "Minimum 1 topics is required");
+        throw new ApiError(400, "Course poster must be less than 2MB");
     }
-    const topicRequiredFields = {
-        topicName: "Topic name",
-        topicDescription: "Topic description",
-        contentType: "Content type"
-    };
-    topics.forEach((topic, index) => {
-        for (const [field, message] of Object.entries(topicRequiredFields)) {
-            if (!topic[field]) {
+
+    const posterUrl = await uploadFile(poster, "", "Course Posters");
+
+    let introVideoUrl = "";
+    if (introVideo) {
+        if (introVideo.mimetype.startsWith("video")) {
+            if (introVideo.size > 20 * 1024 * 1024) { //NOTE - Give valid for file size 
                 deleteFiles(req.files);
                 res.status(400);
-                throw new ApiError(400, `${message} is required for each topic`);
+                throw new ApiError(400, "Intro video must be less than 20MB");
             }
-        }
-        if (!topicsFiles[index]) {
-            deleteFiles(req.files);
-            res.status(400);
-            throw new ApiError(400, `File is required for each topic`);
-        }
-    });
-
-    const coursePosterUrl = await uploadFile(coursePoster, "", "Course Posters");
-
-    let promotionalVideoUrl = "";
-    if (promotionalVideo) {
-        if (promotionalVideo.mimetype.startsWith("video")) {
             //NOTE - Give valid for file size 
-            promotionalVideoUrl = await uploadFile(promotionalVideo, "video", "Promotional Videos");
+            introVideoUrl = await uploadFile(introVideo, "video", "Promotional Videos");
             // console.log(promotionalVideoUrl);
         }
         else {
             deleteFiles(req.files);
             res.status(400);
-            throw new ApiError(400, "Promotional video must be a video file");
+            throw new ApiError(400, "Intro video must be a video file");
         }
     }
 
     // Create new course
     const newCourse = await Course.create({
-        ownerId: req.user._id, //REVIEW - 
-        courseTitle,
-        courseSubtitle,
-        courseDescription,
-        targetAudience,
-        courseLevel: courseLevel.toLowerCase(),
-        learningObjectives,
-        courseRequirements,
-        courseLanguage,
-        instructorBio,
-        coursePoster: coursePosterUrl,
-        promotionalVideo: promotionalVideoUrl,
-        coursePrice,
-        courseCategory: courseCategory.toLowerCase(),
+        owner: req.user._id,
+        ownerModel: req.user.oauthId ? "OauthUser" : "User",
+        courseName,
+        description,
+        prerequsite,
+        poster: posterUrl,
+        introVideo: introVideoUrl
     });
-
-    //STUB - Create new topics
-    const newTopic = await Promise.all(
-        topics.map(async (topic, index) => {
-            try {
-                if (!topicsFiles[index].mimetype.startsWith(topic.contentType.toLowerCase()) && !topicsFiles[index].mimetype.endsWith(topic.contentType.toLowerCase())) {
-                    deleteFiles(topicsFiles[index]);
-                    res.status(400);
-                    throw new ApiError(400, `File type does not match the content type for topic ${index + 1}`);
-                }
-                const topicFileUrl = await uploadFile(topicsFiles[index], topic.contentType.toLowerCase() === "video" ? "video" : "auto", "Course Contents");
-                // Return the result of Topic.create
-                return await Topic.create({
-                    courseId: newCourse._id,
-                    ...topic,
-                    contentFile: topicFileUrl
-                });
-            } catch (error) {
-                console.log(error);
-                throw error; //  throw the error to let Promise.all handle it
-            }
-        })
-    );
-
 
     res.status(201).json(new ApiResponse(
         201,
-        { newCourse, newTopic },
+        newCourse,
         "Course created successfully"));
 
 })
 
+//FIXME - 
 const deleteCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
@@ -180,7 +119,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
         "Course successfully deleted"
     ));
 })
-//SECTION - Topic
+//FIXME -  - Topic
 const addNewTopic = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     //REVIEW - userId
@@ -224,7 +163,7 @@ const addNewTopic = asyncHandler(async (req, res) => {
         "Topic Added success"
     ))
 })
-
+//FIXME - 
 const deleteTopic = asyncHandler(async (req, res) => {
     const { topicId } = req.params;
     const userId = req.user._id;
@@ -250,9 +189,24 @@ const deleteTopic = asyncHandler(async (req, res) => {
     ))
 })
 
+const getAllCourses = asyncHandler(async (req, res) => {
+    const courses = await Course.find({}).populate({
+        path: "owner",
+        select: "name email"
+    });
+    console.log(courses);
+
+    res.status(200).json(new ApiResponse(
+        200,
+        courses,
+        "All Courses"
+    ))
+})
+
 module.exports = {
     createNewCourse,
     addNewTopic,
     deleteCourse,
-    deleteTopic
+    deleteTopic,
+    getAllCourses
 }

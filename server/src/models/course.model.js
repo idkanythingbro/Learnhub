@@ -42,74 +42,40 @@ const topicSchema = new Schema({
 const Topic = mongoose.model('Topic', topicSchema);
 
 const courseSchema = new Schema({
-    ownerId:{
+    owner:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        refPath: 'ownerModel',
         required:true
     },
-    courseTitle: {
+    ownerModel: {
+        type: String,
+        required: true,
+        enum: ['User', 'OauthUser'] // List all possible models here
+    },
+    courseName: {
         type: String,
         required: true,
         min: 3,
         max: 3000,
     },
-    courseSubtitle: {
-        type: String,
-        min: 3,
-        max: 3000,
-
-    },
-    courseDescription: {
+    description: {
         type: String,
         required: true,
-        min: 3,
+        min: 5,
+    },
+    introVideo: {
+        type: String,
+        // required: true
+    },
+    poster: {
+        type: String,
+        required: true
+    },
+    prerequsite: {
+        type: String,
+        default: 'None'
+    },
 
-    },
-    targetAudience: {
-        type: String,
-        required: true
-
-    },
-    courseLevel: {
-        type: String,
-        enum: ['beginner', 'intermediate', 'expert'],
-        required: true
-    },
-    learningObjectives: {
-        type: String,
-        required: true
-    },
-    courseRequirements: {
-        type: String,
-        required: true
-    },
-    courseLanguage: {
-        type: String,
-        required: true
-    },
-    instructorBio: {
-        type: String
-    },
-    coursePoster: {
-        type: String,//Cloudinary URL
-        required: true
-
-    },
-    coursePrice: {
-        type: Number,
-        min: 0,
-        default: 0
-
-    },
-    promotionalVideo: {
-        type: String,//Cloudinary URL
-
-    },
-    courseCategory: {
-        type: String,
-        enum: ['development', 'business', 'finance', 'design', 'others'],
-        required: true
-    }
 }, {
     timestamps: true
 });

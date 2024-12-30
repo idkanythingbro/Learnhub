@@ -13,10 +13,6 @@ const {
   isEmailValid,
   isPhoneNumberValid,
   isPasswordValid,
-  isGithubLinkValid,
-  isLinkedinLinkValid,
-  isTwitterLinkValid,
-  isLinkValid,
 } = require("../utils/validation");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
@@ -67,15 +63,16 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     confirmpassword,
   } = req.body;
-  console.log(
-    firstname,
-    lastname,
-    email,
-    phone,
-    organization,
-    password,
-    confirmpassword
-  );
+
+  // console.log(
+  //   firstname,
+  //   lastname,
+  //   email,
+  //   phone,
+  //   organization,
+  //   password,
+  //   confirmpassword
+  // );
   if (
     !firstname ||
     !lastname ||
@@ -99,12 +96,14 @@ const registerUser = asyncHandler(async (req, res) => {
   let currentTime = Date.now().toString();
   let userName =
     email.split("@")[0] + currentTime.substring(currentTime.length - 2);
-
+    // console.log(userName);
   const user = await User.create({
     name: `${firstname} ${lastname}`,
     email,
     password,
   });
+  // console.log(userName);
+  
   const userDetails = await UserDetails.create({
     ownerId: user._id,
     phone,
