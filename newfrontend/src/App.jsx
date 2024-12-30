@@ -19,6 +19,7 @@ import {
   Social,
   UpdateProfile,
 } from "./_root/pages";
+import MyDropzone from "./Test";
 
 const App = () => {
   const loggedInUserData = useSelector((state) => state.userReducer.user);
@@ -35,12 +36,10 @@ const App = () => {
     <main className="relative min-h-screen w-screen overflow-x-hidden">
       <Routes>
         <Route index element={<HomeLayout />} />
-        {/* public routes */}
         <Route element={<AuthLayout />}>
           <Route path="/sign-in" element={<SigninForm />} />
           <Route path="/sign-up" element={<SignupForm />} />
         </Route>
-        {/* private routes */}
         <Route element={<RootLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
