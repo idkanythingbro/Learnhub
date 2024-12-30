@@ -33,7 +33,7 @@ const App = () => {
     console.log(loggedInUserData);
   }, [loggedInUserData]);
   return (
-    <main className="relative min-h-screen w-screen overflow-x-hidden">
+    <main className=" bg-black">
       <Routes>
         <Route index element={<HomeLayout />} />
         <Route element={<AuthLayout />}>

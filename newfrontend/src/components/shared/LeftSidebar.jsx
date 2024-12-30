@@ -1,10 +1,6 @@
 import { GiSpellBook } from "react-icons/gi";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import {
-  logoutUser,
-  getLoginUserDetails,
-  getProfile,
-} from "../../service/user.service";
+import { logoutUser, getProfile } from "../../service/user.service";
 import { useDispatch, useSelector } from "react-redux";
 import { sidebarLinks } from "../../assets/constant";
 import { useEffect, useState } from "react";
@@ -17,8 +13,21 @@ const LeftSidebar = () => {
     dispatch(logoutUser());
   };
 
-  const user = getLoginUserDetails();
-  // console.log(user);
+  const [profile, setProfile] = useState({});
+  const loggedInUserData = useSelector((state) => state.userReducer.user);
+
+  useEffect(() => {
+    if (loggedInUserData) {
+      dispatch(getProfile(loggedInUserData._id));
+    }
+  }, [loggedInUserData]);
+
+  const profileData = useSelector((state) => state.userReducer.profile);
+  useEffect(() => {
+    // console.log(profileData);
+
+    setProfile(profileData);
+  }, [profileData]);
 
   return (
     <nav className="leftsidebar">
@@ -29,17 +38,17 @@ const LeftSidebar = () => {
         {/* link for profile page goes here */}
         <Link className="flex gap-3 items-center">
           <img
-            src={user.img || "/public/icons/profile-placeholder.svg"}
+            src={profile?.avatar || "/public/icons/profile-placeholder.svg"}
             alt="profile"
             className="h-10 w-10 rounded-full"
           />
           <div className="flex flex-col">
             <p className="text-[18px] font-bold leading-[140%] text-light-2">
-              User
+              {profile?.name}
               {/* put user profile here */}
             </p>
             <p className="text-[14px] font-normal leading-[140%]  text-light-3">
-              @username
+              @{profile?.userName}
               {/* put username here */}
             </p>
           </div>
