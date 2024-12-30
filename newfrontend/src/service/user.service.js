@@ -47,7 +47,7 @@ export const loginUser = (userData, navigate) => async (dispatch) => {
     if (response.data.success) {
       toast.dismiss(toastId);
       dispatch(getLoginUserDetails());
-      navigate("/home");
+      navigate("/");
     }
   } catch (error) {
     toast.dismiss(toastId);

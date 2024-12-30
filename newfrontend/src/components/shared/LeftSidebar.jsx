@@ -32,7 +32,7 @@ const LeftSidebar = () => {
   return (
     <nav className="leftsidebar">
       <div className="flex flex-col gap-11">
-        <Link to="/home" className="flex gap-3 items-center">
+        <Link to="/" className="flex gap-3 items-center">
           <GiSpellBook className="bg-white rounded-full w-10 h-10" />
         </Link>
         {/* link for profile page goes here */}

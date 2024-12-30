@@ -3,7 +3,7 @@ export const userApiRout = `${import.meta.env.VITE_SERVER_BASE_URL}/users`;
 export const sidebarLinks = [
   {
     imgUrl: "/icons/home.svg",
-    route: "/home",
+    route: "/",
     label: "Home",
   },
   {

@@ -121,20 +121,21 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-
+//NOTE - Client base URL
+const clientBaseUrl = process.env.CLIENT_BASE_URL||"http://localhost:3000";
 // initial google ouath login
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/home",
-    failureRedirect: "http://localhost:3000/sign-in"
+    successRedirect: `${clientBaseUrl}/`,
+    failureRedirect: `${clientBaseUrl}/sign-in`
 }))
 
 app.get('/login/oauth', passport.authenticate('github'));
 
 app.get('/login/oauth/authorize', passport.authenticate('github', {
-    successRedirect: "http://localhost:3000/home",
-    failureRedirect: "http://localhost:3000/sign-in"
+    successRedirect: `${clientBaseUrl}/`,
+    failureRedirect: `${clientBaseUrl}/sign-in`
 
 }));
 
