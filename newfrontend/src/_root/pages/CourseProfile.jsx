@@ -30,6 +30,7 @@ const CourseProfile = () => {
               <>
                 <h1>{course.courseName}</h1>
                 <p>{course.description}</p>
+                <video src={course.introVideo} controls></video>
                 <button className="border p-4" onClick={handelCourseEnroll}>Enroll</button>
               </>
             ) : (<h1>No Course Found</h1>)
