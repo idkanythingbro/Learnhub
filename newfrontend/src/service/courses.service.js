@@ -52,6 +52,22 @@ export const getAllCourses = () => async (dispatch) => {
     }
 };
 
+export const getCourseById = async (courseId) => {
+    try {
+        const response = await axios.get(`${baseUrl}/courses/${courseId}`, {
+            withCredentials: true
+        });
+
+        // console.log(response.data.data);
+        return response.data.data;
+
+    } catch (error) {
+        errorToast(error);
+        // console.log(error);
+        return null;
+    }
+}
+
 export const enrollCourse = async (courseId) => {
     try {
         const response = await axios.patch(`${baseUrl}/courses/enroll/${courseId}`, {}, {

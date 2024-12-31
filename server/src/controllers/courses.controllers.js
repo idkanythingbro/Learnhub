@@ -204,6 +204,24 @@ const getAllCourses = asyncHandler(async (req, res) => {
     ))
 })
 
+const getCourseById = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).populate({
+        path: "owner",
+        select: "name email"
+    });
+    if (!course) {
+        res.status(404);
+        throw new ApiError(404, "Course not found");
+    }
+    res.status(200).json(new ApiResponse(
+        200,
+        course,
+        "Course Details"
+    ))
+
+})
+
 const getCreatedCourses = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const courses = await Course.find({ owner: userId });
@@ -284,7 +302,7 @@ const getEnrolledCourses = asyncHandler(async (req, res) => {
     }
     const courseIds = userDetails.enrolledCourses.map(courseDetails => courseDetails.course);
     const courses = await Course.find({ _id: { $in: courseIds } });
-    
+
     res.status(200).json(new ApiResponse(200, courses, "Enrolled courses"));
 })
 
@@ -294,6 +312,7 @@ module.exports = {
     deleteCourse,
     deleteTopic,
     getAllCourses,
+    getCourseById,
     getCreatedCourses,
     enrolledNewCourse,
     getEnrolledCourses
