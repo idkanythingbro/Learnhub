@@ -15,34 +15,7 @@ const Explore = () => {
     (state) => state.courseReducer.courseLoading
   );
   const coursesData = useSelector((state) => state.courseReducer.courses);
-  // const courses = [
-  //   {
-  //     id: 1,
-  //     courseName: "Cloud Computing",
-  //     poster: "/icons/cloud.svg",
-  //     owner:{
-  //       name:"Sobhandev Pramanik",
-  //       email:"demo@gmail.com"
 
-  //     },
-  //     createdAt: "2024-12-25T18:58:34.466+00:00",
-  //     description:
-  //       "This is a test course made while creating this application by its developers. It contains nothing it. Do like this course to appreciate it.",
-  //     likes: 100,
-  //   },
-  //   {
-  //     id: 2,
-  //     courseName: "CyberSecurity",
-  //     poster: "/icons/cloud.svg",
-  //     createdBy: "Sobhandev Pramanik",
-  //     createdAt: "2022-12-25T18:58:34.466+00:00",
-  //     description:
-  //       "This is a test course made while creating this application by its developers. It contains nothing it. Do like this course to appreciate it.",
-  //     likes: [
-  //like user id
-  // ],
-  //   },
-  // ];
   useEffect(() => {
     dispatch(getAllCourses());
   }, []);
