@@ -5,7 +5,7 @@ const EditCourse = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const courseId = searchParams.get("courseId");
-  console.log(courseId);
+  // console.log(courseId);
   return (
     <div className="bg-black text-white flex flex-1">
       <div className="common-container">
