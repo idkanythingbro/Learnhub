@@ -400,7 +400,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, userProfile, "Profile updated successfully"));
 });
 
-//Follow
+//FIXME - 
 const follow = asyncHandler(async (req, res) => {
   const { userId, userName } = req.body;
   if (!userId && !userName) {
@@ -441,7 +441,7 @@ const follow = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Flowers added successfully"));
 });
 
-//Unfollow
+//FIXME - 
 const unfollow = asyncHandler(async (req, res) => {
   const { userId, userName } = req.body;
   if (!userId && !userName) {
@@ -477,6 +477,7 @@ const unfollow = asyncHandler(async (req, res) => {
 });
 
 //Gate post
+//FIXME - 
 const getLoggedInUserPost = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   if (!userId) {
@@ -489,6 +490,9 @@ const getLoggedInUserPost = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, posts, "Posts fetched successfully"));
 });
+
+
+
 
 module.exports = {
   registerUser,

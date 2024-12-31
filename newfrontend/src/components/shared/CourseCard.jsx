@@ -16,7 +16,7 @@ const CourseCard = ({ course }) => {
             />
           </div>
           {/* have to change the link here to go the course profile */}
-          <Link to={`/courseprofile`}>
+          <Link to={`/courseprofile?courseId=${course._id}`}>
             <p>{course.courseName}</p>
           </Link>
           <div className="flex flex-col">

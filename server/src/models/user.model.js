@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { isEmailValid, isPhoneNumberValid, isPasswordValid } = require("../utils/validation");
 const generateOtp = require("../utils/generatOtp");
 const Otp = require("./otp.models");
+const { Topic } = require("./course.model");
 const userDetailsSchema = new mongoose.Schema({
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -44,59 +45,30 @@ const userDetailsSchema = new mongoose.Schema({
         enum: ["student", "teacher"],
         default: "student"
     },
-
-    post: {
-        type: Number,
-        default: 0
-    },
-    followers: {
-        type: [
-            {
-                id: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "User",
-                    required: true
-                },
-                userName: {
-                    type: String,
-                    required: true
-                }
+    enrolledCourses: {
+        type: [{
+            course: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Course",
+                required: true
+            },
+            completedTopic: {
+                type: Number,
+                default: 0
+            },
+            totalTopic: {
+                type: Number,
+                default: 0
             }
-        ],
+        }],
+        ref: "Course",
         default: []
     },
-    following: {
-        type: [
-            {
-                id: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "User",
-                    required: true
-                },
-                userName: {
-                    type: String,
-                    required: true
-                }
-            }
-        ],
+    completedCourses: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Course",
         default: []
     },
-    progress: {
-        type: [
-            {
-                topic: {
-                    type: String,
-                    required: true
-                },
-                value: {
-                    type: Number,
-                    required: true
-                }
-            }
-        ],
-        default: []
-    },
-
 })
 
 const userSchema = new mongoose.Schema({
@@ -238,6 +210,40 @@ userSchema.methods.generateRefreshToken = async function () {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     );
+}
+
+userDetailsSchema.methods.addCourse = async function (courseId) {
+    this.enrolledCourses.push({ course:courseId });
+    await this.save();
+    return this;
+}
+userDetailsSchema.methods.removeCourse = async function (courseId) {
+    this.enrolledCourses = this.enrolledCourses.filter(courseDetails => courseDetails.course.toString() !== courseId.toString());
+    await this.save();
+    return this;
+}
+//Update totalTopic count when a new course is added
+userDetailsSchema.pre("save", async function (next) {
+    if (this.isModified('enrolledCourses')) {
+        for (const enrolledCourse of this.enrolledCourses) {
+            if (enrolledCourse.isNew) { // Only set for newly added courses
+                const topics = await Topic.find({ course: enrolledCourse.course });
+                // console.log("topics", topics.length);
+                enrolledCourse.totalTopic = topics ? topics.length : 0;
+            }
+        }
+    }
+    next();
+})
+//Update completedTopic count 
+userDetailsSchema.methods.updateCompletedTopics = async function (courseId) {
+    const courseDetails = this.enrolledCourses.find(courseDetails => courseDetails.course.toString() === courseId.toString());
+    if (!courseDetails) {
+        throw new Error("Course not found");
+    }
+    courseDetails.completedTopic = courseDetails.completedTopic + 1;
+    await this.save();
+    return this;
 }
 
 const User = mongoose.model("User", userSchema);

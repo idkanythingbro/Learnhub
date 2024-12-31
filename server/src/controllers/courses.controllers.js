@@ -5,6 +5,7 @@ const ApiError = require("../utils/ApiErrors");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs");
+const { User, OauthUser, UserDetails } = require("../models/user.model");
 const uploadFile = async (file, type = "auto", cloudinaryFolder = "") => {
 
     const url = await uploadFileToCloudinary(file.path, type, cloudinaryFolder);
@@ -203,10 +204,97 @@ const getAllCourses = asyncHandler(async (req, res) => {
     ))
 })
 
+const getCreatedCourses = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const courses = await Course.find({ owner: userId });
+    res.status(200).json(new ApiResponse(200, courses, "Created Courses"));
+})
+
+const enrolledNewCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+    const userId = req.user._id;
+    let user = null;
+    if (req.user.oauthId) {
+        user = await OauthUser.findById(userId);
+    } else {
+        user = await User.findById(userId);
+    }
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+        throw new ApiError(404, "Course not found");
+    }
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
+        throw new ApiError(404, "User details not found");
+    }
+    const isEnrolled = userDetails.enrolledCourses.find(
+        (courseDetails) => courseDetails.course.toString() === courseId.toString()
+    );
+    if (isEnrolled) {
+        throw new ApiError(400, "Course already enrolled");
+    }
+    userDetails.addCourse(courseId);
+
+    // await userDetails.save();
+    res.status(200)
+        .json(new ApiResponse(200, {}, "Course enrolled successfully"));
+})
+
+//FIXME - 
+const unenrolledCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+    const userId = req.user._id;
+    const user = await
+        User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+    const course = await Course.findById(courseId);
+    if (!course) {
+        throw new ApiError(404, "Course not found");
+    }
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
+        throw new ApiError(404, "User details not found");
+    }
+    const isEnrolled = userDetails.enrolledCourses.find(
+        (courseDetails) => courseDetails.course.toString() === courseId.toString()
+    );
+    if (!isEnrolled) {
+        throw new ApiError(400, "Course not enrolled");
+    }
+    userDetails.enrolledCourses = userDetails.enrolledCourses.filter(
+        (courseDetails) => courseDetails.course.toString() !== courseId.toString()
+    );
+    await userDetails.save();
+    res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Course unenrolled successfully"));
+})
+
+const getEnrolledCourses = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
+        throw new ApiError(404, "User details not found");
+    }
+    const courseIds = userDetails.enrolledCourses.map(courseDetails => courseDetails.course);
+    const courses = await Course.find({ _id: { $in: courseIds } });
+    
+    res.status(200).json(new ApiResponse(200, courses, "Enrolled courses"));
+})
+
 module.exports = {
     createNewCourse,
     addNewTopic,
     deleteCourse,
     deleteTopic,
-    getAllCourses
+    getAllCourses,
+    getCreatedCourses,
+    enrolledNewCourse,
+    getEnrolledCourses
 }
