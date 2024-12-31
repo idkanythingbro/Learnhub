@@ -1,5 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import FileUploader from "../shared/FileUploader";
+import VideoUploader from "../shared/VideoUploader";
 import { createNewCourse } from "../../service/courses.service";
 
 const CourseForm = () => {
@@ -14,14 +15,14 @@ const CourseForm = () => {
       poster: {},
       courseName: "",
       introVideo: {},
+      prerequsite: "",
     },
   });
   // here is the data of the form
   const onSubmit = handleSubmit((data) => {
-    // console.log(data);
+    console.log(data);
     createNewCourse(data);
   });
-
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-9 w-full max-w-5xl">
@@ -76,7 +77,7 @@ const CourseForm = () => {
         <Controller
           control={control}
           name="introVideo"
-          render={({ field }) => <FileUploader fieldChange={field.onChange} />}
+          render={({ field }) => <VideoUploader fieldChange={field.onChange} />}
         />
       </div>
       <div className="flex items-center gap-4 justify-end">

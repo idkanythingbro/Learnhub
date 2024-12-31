@@ -2,7 +2,7 @@
 import { useDropzone } from "react-dropzone";
 import { useCallback, useState } from "react";
 
-const FileUploader = ({ fieldChange }) => {
+const VideoUploader = ({ fieldChange }) => {
   const [file, setFile] = useState([]);
   const [dataURL, setDataURL] = useState("");
   const onDrop = useCallback(
@@ -18,9 +18,9 @@ const FileUploader = ({ fieldChange }) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpeg", ".jpg"],
+      "video/*": [],
     },
-    maxSize: 2500000,
+    maxSize: 25000000,
     minSize: 0,
   });
   // console.log(file[0].type);
@@ -35,18 +35,10 @@ const FileUploader = ({ fieldChange }) => {
         {dataURL ? (
           <div className="file_uploader-box ">
             <div className="object-contain">
-              {file[0].type === "video/mp4" ? (
-                <video
-                  src={dataURL}
-                  className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
-                />
-              ) : (
-                <img
-                  src={dataURL}
-                  alt="file upload"
-                  className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
-                />
-              )}
+              <video
+                src={dataURL}
+                className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
+              />
             </div>
             <p className="text-light-4 small-regular mb-6">
               Click or Drag again to upload again
@@ -64,9 +56,7 @@ const FileUploader = ({ fieldChange }) => {
             <h3 className="base-medium text-light-2 mb-2 mt-6 uppercase">
               Drag files here or Click here to upload
             </h3>
-            <p className="text-light-4 small-regular mb-6">
-              SVG, PNG, JPG, JPEG
-            </p>
+            <p className="text-light-4 small-regular mb-6">MP3, MP4</p>
           </div>
         )}
       </div>
@@ -74,4 +64,4 @@ const FileUploader = ({ fieldChange }) => {
   );
 };
 
-export default FileUploader;
+export default VideoUploader;

@@ -81,7 +81,7 @@ const LeftSidebar = () => {
           })}
         </ul>
       </div>
-      <button className="flex h-8 w-8" onClick={handelSignOut}>
+      <button className="flex h-8 w-8 mt-5" onClick={handelSignOut}>
         <img src="/icons/logout.svg" />
         <p className="text-white small-medium lg:base-medium">Logout</p>
       </button>

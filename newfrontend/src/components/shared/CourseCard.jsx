@@ -7,12 +7,14 @@ const CourseCard = ({ course }) => {
   return (
     <div className="bg-dark-2 rounded-3xl border border-dark-4 p-5 lg:p-7 w-full max-w-screen-sm">
       <div className="flex-between">
-        <div className="flex flex-col">
-          <img
-            src={course.poster || "/icons/cloud.svg"}
-            alt="course poster"
-            className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
-          />
+        <div className="flex flex-col w-full">
+          <div className="w-full flex justify-center items-center">
+            <img
+              src={course.poster || "/icons/cloud.svg"}
+              alt="course poster"
+              className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
+            />
+          </div>
           {/* have to change the link here to go the course profile */}
           <Link to={`/courseprofile?courseId=${course._id}`}>
             <p>{course.courseName}</p>
