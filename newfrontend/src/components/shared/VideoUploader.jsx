@@ -37,6 +37,7 @@ const VideoUploader = ({ fieldChange }) => {
             <div className="object-contain">
               <video
                 src={dataURL}
+                controls
                 className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
               />
             </div>
