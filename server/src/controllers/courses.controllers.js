@@ -297,18 +297,21 @@ const getAllCourses = asyncHandler(async (req, res) => {
 
 const getCourseById = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
-    const course = await Course.findById(courseId).populate({
+    let course = await Course.findById(courseId).populate({
         path: "owner",
         select: "name email"
     });
- 
+
     if (!course) {
         res.status(404);
         throw new ApiError(404, "Course not found");
     }
-    //FIXME - 
-    // const topics = await Topic.find({ course: courseId });
-    // course.topics = topics;
+
+    const topics = await Topic.find({ course: courseId });
+    course = {
+        ...course.toObject(), // Convert Mongoose document to plain object
+        topics
+    };
 
     res.status(200).json(new ApiResponse(
         200,
