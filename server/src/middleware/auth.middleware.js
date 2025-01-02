@@ -4,6 +4,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const jwt = require("jsonwebtoken");
 
 const jwtVerify = asyncHandler(async (req, _, next) => {
+    // console.log("update course");
     if(req.user){
         // console.log("JWt=>",req.user);
         next();  

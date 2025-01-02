@@ -113,3 +113,40 @@ export const getEnrolledCourses = () => async (dispatch) => {
         return false
     }
 }
+
+export const updateCourse = async (courseId, courseData) => {
+    const tostId = toast.loading("Updating ...");
+    try {
+        // console.log(courseData);
+
+        const formData = new FormData();
+        formData.append('courseName', courseData.courseName);
+        formData.append('description', courseData.description);
+        formData.append('introVideo', courseData.introVideo[0]); // File object
+        formData.append('poster', courseData.poster[0]); // File object
+        formData.append('prerequsite', courseData.prerequsite);
+// console.log(courseData.videos);
+
+        // Topic
+        courseData.videos?.forEach((topic)=> {
+            // console.log(topic);
+            
+            formData.append('topics', topic.name);
+            formData.append(`${topic.name}`, topic.file);
+        });
+
+        // console.log("F", formData);
+
+        const response = await axios.put(`${baseUrl}/courses/update/${courseId}`, formData, {
+            withCredentials: true
+        })
+
+        toast.dismiss(tostId);
+        toast.success("Course updated successfully");
+        // console.log("D", response.data);
+    } catch (error) {
+        toast.dismiss(tostId);
+        console.log(error);
+
+    }
+}

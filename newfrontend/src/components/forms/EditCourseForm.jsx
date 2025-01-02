@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { getCourseById } from "../../service/courses.service";
+import { getCourseById, updateCourse } from "../../service/courses.service";
 import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -14,8 +14,7 @@ const EditCourseForm = () => {
   const [course, setCourse] = useState(undefined);
   useEffect(() => {
     getCourseById(courseId).then((data) => {
-      console.log(data);
-
+      // console.log(data);
       setCourse(data);
     });
   }, []);
@@ -98,7 +97,8 @@ const EditCourseForm = () => {
     //   introVideo: data.introVideo || course?.introVideo,
     //   videos: data.videos,
     // };
-    console.log(data);
+    // console.log(data);
+    updateCourse(courseId, data);
   });
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-9 w-full max-w-5xl">

@@ -28,8 +28,9 @@ const uploadFileToCloudinary = async (
                 asset_folder: asset_folder || ''
             });
 
-
-        fs.unlinkSync(localFilePath);
+        if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
         // console.log(uploadResult);
         return uploadResult.url;
     } catch (error) {
@@ -41,15 +42,19 @@ const uploadFileToCloudinary = async (
 
 
 
-const deleteFromCloudinary = async (public_url) => {
+const deleteFromCloudinary = async (public_url, resource_type) => {
 
     try {
         if (!public_url) return null
         const public_id = public_url.split('/').pop().split('.').shift();
-        // console.log(public_id);
+        console.log(public_id);
 
         configCloudinary();
-        const res = await cloudinary.uploader.destroy(public_id);
+        const res = await cloudinary.uploader.destroy(public_id, {
+            resource_type: resource_type || "image"
+        });
+
+        // console.log(res);
         return res;
     } catch (error) {
         // console.log(error);
@@ -57,7 +62,28 @@ const deleteFromCloudinary = async (public_url) => {
     }
 }
 
+// const deleteVideoFromCloudinary = async (public_url) => {
+
+//     try {
+//         if (!public_url) return null
+//         const public_id = public_url.split('/').pop().split('.').shift();
+//         console.log(public_id);
+
+//         configCloudinary();
+//         const res = await cloudinary.uploader.destroy(public_id, {
+//             resource_type:"image"
+//         });
+
+//         console.log(res);
+//         return res;
+//     } catch (error) {
+//         // console.log(error);
+//         return null;
+//     }
+// }
+
 module.exports = {
     uploadFileToCloudinary,
     deleteFromCloudinary,
+    // deleteVideoFromCloudinary
 }

@@ -22,7 +22,43 @@ const deleteFiles = (files) => {
         }
     });
 };
+
 //SECTION - Course
+
+const createNewTopics = async (courseId, topics, files) => {
+    // Create a map for quick file lookup by fieldname
+    const fileMap = files.reduce((map, file) => {
+        map[file.fieldname] = file;
+        return map;
+    }, {});
+
+    // Prepare promises for creating topics
+    const promises = topics.map(async (topic) => {
+        const file = fileMap[topic];
+        if (!file) {
+            throw new ApiError(400, `File for topic "${topic}" not found`);
+        }
+        const url = await uploadFile(file, "video", "Course Contents");
+        return Topic.create({
+            course: courseId,
+            topicName: topic,
+            file: url
+        });
+    });
+
+    // Wait for all promises to settle
+    const results = await Promise.allSettled(promises);
+
+    // Check for rejections and log them
+    const errors = results.filter(result => result.status === 'rejected');
+    if (errors.length > 0) {
+        const errorMessages = errors.map(error => error.reason.message).join(", ");
+        throw new ApiError(400, `Failed to create some topics: ${errorMessages}`);
+    }
+
+    return true;
+};
+
 const createNewCourse = asyncHandler(async (req, res) => {
     // console.log(req.body);
     const { courseName, description, prerequsite } = req.body;
@@ -95,7 +131,62 @@ const createNewCourse = asyncHandler(async (req, res) => {
         "Course created successfully"));
 
 })
+//TODO - 
+const updateCourse = asyncHandler(async (req, res) => {
+    // console.log("update course");
+    const { courseName, description, prerequsite, topics } = req.body;
+    const courseId = req.params.courseId;
+    const userId = req.user._id;
+    const course = await Course.findOne({ _id: courseId, owner: userId });
+    if (!course) {
+        res.status(404);
+        throw new ApiError(404, "Course not found");
+    }
+    const updatedCourse = {
+        courseName: courseName || course.courseName,
+        description: description || course.description,
+        prerequsite: prerequsite || course.prerequsite,
+    }
+    const poster = req.files.find(file => file.fieldname === 'poster');
+    const introVideo = req.files.find(file => file.fieldname === 'introVideo');
+    if (poster) {
+        if (poster.size > 2 * 1024 * 1024) {
+            deleteFiles(req.files);
+            res.status(400);
+            throw new ApiError(400, "Course poster must be less than 2MB");
+        }
+        const posterUrl = await uploadFile(poster, "", "Course Posters");
+        await deleteFromCloudinary(course.poster);
+        updatedCourse.poster = posterUrl;
+    }
+    if (introVideo) {
+        if (introVideo.mimetype.startsWith("video")) {
+            if (introVideo.size > 20 * 1024 * 1024) {
+                deleteFiles(req.files);
+                res.status(400);
+                throw new ApiError(400, "Intro video must be less than 20MB");
+            }
+            const introVideoUrl = await uploadFile(introVideo, "video", "Promotional Videos");
+            await deleteFromCloudinary(course.introVideo, "video");
+            updatedCourse.introVideo = introVideoUrl;
+        } else {
+            deleteFiles(req.files);
+            res.status(400);
+            throw new ApiError(400, "Intro video must be a video file");
+        }
+    }
+    await Course.updateOne({
+        _id: course._id
+    }, updatedCourse);
 
+    const result = await createNewTopics(course._id, topics, req.files);
+    // console.log(result);
+    res.status(200).json(new ApiResponse(
+        200,
+        {},
+        "Course updated successfully"
+    ));
+})
 //FIXME - 
 const deleteCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
@@ -210,10 +301,15 @@ const getCourseById = asyncHandler(async (req, res) => {
         path: "owner",
         select: "name email"
     });
+ 
     if (!course) {
         res.status(404);
         throw new ApiError(404, "Course not found");
     }
+    //FIXME - 
+    // const topics = await Topic.find({ course: courseId });
+    // course.topics = topics;
+
     res.status(200).json(new ApiResponse(
         200,
         course,
@@ -315,5 +411,6 @@ module.exports = {
     getCourseById,
     getCreatedCourses,
     enrolledNewCourse,
-    getEnrolledCourses
+    getEnrolledCourses,
+    updateCourse
 }

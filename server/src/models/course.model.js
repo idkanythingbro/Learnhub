@@ -12,25 +12,7 @@ const topicSchema = new Schema({
         min: 3,
         max: 3000,
     },
-    topicDescription: {
-        type: String,
-        required: true,
-        min: 3,
-    },
-    learningObjectives: {
-        type: String,
-        min: 3,
-    },
-    prerequisites: {
-        type: String,
-        default: 'None'
-    },
-    contentType: {
-        type: String,
-        enum: ['pdf', 'video'],
-        required: true
-    },
-    contentFile: {
+    file: {
         type: String, //Cloudinary URL
         required: true
     },
@@ -42,10 +24,10 @@ const topicSchema = new Schema({
 const Topic = mongoose.model('Topic', topicSchema);
 
 const courseSchema = new Schema({
-    owner:{
-        type:mongoose.Schema.Types.ObjectId,
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
         refPath: 'ownerModel',
-        required:true
+        required: true
     },
     ownerModel: {
         type: String,
