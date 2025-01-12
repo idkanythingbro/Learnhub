@@ -17,21 +17,18 @@ const {
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
-// const sendEmail = require("../service/email.service");
+const sendEmail = require("../service/email.service");
 const {
   accessTokenCookieOption,
   refreshTokenCookieOption,
   accessTokenCookieName,
   refreshTokenCookieName,
+  passwordResetMailHtml,
 } = require("../assets/constan");
 const Post = require("../models/post.models");
 
-// const cookieOption = {
-//     httpOnly:true,
-//     secure:true,
-//     sameSite:"none",
-//     expires: new Date(Date.now()+1000*60*60*24*3)
-// }
+
+
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -51,6 +48,11 @@ const generateAccessAndRefreshTokens = async (userId) => {
       "Something went wrong while generating refresh and access token"
     );
   }
+};
+
+const generateResetToken = (email) => {
+  const payload = { email };
+  return jwt.sign(payload, process.env.PASSWORD_RESET_TOKEN_SECRET, { expiresIn: "1h" });
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -96,14 +98,14 @@ const registerUser = asyncHandler(async (req, res) => {
   let currentTime = Date.now().toString();
   let userName =
     email.split("@")[0] + currentTime.substring(currentTime.length - 2);
-    // console.log(userName);
+  // console.log(userName);
   const user = await User.create({
     name: `${firstname} ${lastname}`,
     email,
     password,
   });
   // console.log(userName);
-  
+
   const userDetails = await UserDetails.create({
     ownerId: user._id,
     phone,
@@ -226,7 +228,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const getLoginUserDetails = asyncHandler(async (req, res) => {
   let user = req.user;
   // console.log(user);
-  
+
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -240,7 +242,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   // const { identifier } = req.params;
   let user = req.user;
   // console.log(user);
-  
+
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -259,6 +261,34 @@ const getUserProfile = asyncHandler(async (req, res) => {
     );
 });
 
+//Send mail for reset password
+const sendPasswordResetMail = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  // console.log(email);
+
+  if (!email || !isEmailValid(email)) {
+    throw new ApiError(400, "Invalid email");
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  //Genaret Password reset token
+  const resetToken = generateResetToken(email);
+  const resetUrl = `${process.env.CLIENT_BASE_URL}/reset-password?token=${resetToken}`;
+  //Send mail
+  const subject = "Reset Password";
+
+  const html = passwordResetMailHtml(resetUrl);
+
+  const success = await sendEmail(email, subject, "", html);
+  if (!success) {
+    throw new ApiError(500, "Failed to send email");
+
+  }
+  res.status(200).json(new ApiResponse(200, {}, "Password reset mail sent on registered email"));
+
+});
 //Update password
 //FIXME -
 const updatePassword = asyncHandler(async (req, res) => {
@@ -503,6 +533,7 @@ module.exports = {
   refreshAccessToken,
   getLoginUserDetails,
   getUserProfile,
+  sendPasswordResetMail,
   updatePassword,
   updateProfile,
   follow,

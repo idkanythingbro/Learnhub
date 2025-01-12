@@ -24,18 +24,6 @@ export const registerUser = (userData, navigate) => async (_) => {
   }
 };
 
-// export const activateAccount = async (otp, email) => {
-//     try {
-//         const response = await axios.post(`${userApiRout}/active-account`, { otp, email });
-//         if (response.data.success) {
-//             toast.success(response.data.message);
-//             navigate("/")
-//         }
-//     } catch (error) {
-//         errorToast(error);
-//     }
-// }
-
 export const loginUser = (userData, navigate) => async (dispatch) => {
   const toastId = toast.loading("Logging in...", {
     autoClose: 1000 * 60 * 10,
@@ -115,7 +103,7 @@ export const getProfile = (id) => async (dispatch) => {
       return null;
     }
     // let identifier = userName || id;
-    const response = await axios.get(`${userApiRout}/profile`,{
+    const response = await axios.get(`${userApiRout}/profile`, {
       withCredentials: true,
     });
     if (response.data.success) {
@@ -155,5 +143,26 @@ export const updateProfile = (key, value) => async (dispatch) => {
     toast.dismiss(toastId);
     errorToast(error);
     return null;
+  }
+};
+
+export const requestToResetPassword = async (email) => {
+  console.log("requestToResetPassword", email);
+  
+  const toastId = toast.loading("Sending email...");
+  try {
+    const response = await axios.put(`${userApiRout}/request-reset-password/`, {
+      email,
+    });
+    if (response.data.success) {
+      toast.dismiss(toastId);
+      toast.success(response.data.message);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    toast.dismiss(toastId);
+    errorToast(error);
+    return false;
   }
 };

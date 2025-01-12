@@ -8,6 +8,7 @@ import { loginUser } from "../../service/user.service";
 const SigninForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const Server_URL = import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5001";
   const {
     register,
     handleSubmit,
@@ -17,11 +18,11 @@ const SigninForm = () => {
 
   const loginwithgoogle = () => {
     // alert("Login with Google")
-    window.open("http://localhost:5001/auth/google/callback", "_self");
+    window.open(`${Server_URL}/auth/google/callback`, "_self");
   };
   const loginwithgithub = () => {
     // alert("Login with Github")
-    window.open("http://localhost:5001/login/oauth/authorize", "_self");
+    window.open(`${Server_URL}/login/oauth/authorize`, "_self");
   };
 
   return (
@@ -64,19 +65,32 @@ const SigninForm = () => {
           </div>
           <div className="flex items-start mb-6">
             <div className="flex items-center h-5">
-              <input
-                id="remember"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-              />
+              <div className="flex items-center h-5">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  value=""
+                  className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+                />
+              </div>
+              <label
+                htmlFor="remember"
+                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Remember Me
+              </label>
             </div>
-            <label
-              htmlFor="remember"
-              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Remember Me
-            </label>
+            <div className="ms-auto">
+              
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-violet-500"
+              >
+                Forgot Password?
+              </Link>
+
+             
+            </div>
           </div>
           <button
             type="submit"
