@@ -20,6 +20,8 @@ import {
   UpdateProfile,
 } from "../_root/pages";
 import EditCourse from "../_root/pages/EditCourse";
+import CoursePlayer from "../_root/pages/CoursePlayer";
+import UserProfile from "./shared/UserProfile";
 
 const Routing = () => {
   const [user, setUser] = useState(null);
@@ -56,6 +58,8 @@ const Routing = () => {
           <Route path="updateprofile" element={<UpdateProfile />} />
           <Route path="courseprofile" element={<CourseProfile />} />
           <Route path="editprofile" element={<EditCourse />} />
+          <Route path="courseplayer" element={<CoursePlayer />} />
+          <Route path="userprofile" element={<UserProfile />} />
         </Route>
         <Route path="*" element={<h1 className="text-white">NOT fOUND</h1>} />
       </Routes>
