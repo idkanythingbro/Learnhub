@@ -8,12 +8,13 @@ const { registerUser,
     refreshAccessToken,
     getLoginUserDetails,
     getUserProfile,
-    updatePassword,
+
     updateProfile,
     follow,
     unfollow,
     getLoggedInUserPost,
-    sendPasswordResetMail
+    sendPasswordResetMail,
+    restPassword
 } = require('../controllers/users.controllers');
 const upload = require('../middleware/multer.middleware');
 const { jwtVerify } = require('../middleware/auth.middleware');
@@ -28,7 +29,7 @@ router.get('/logout', jwtVerify, logoutUser);
 router.get("/refresh-access-token", refreshAccessToken)
 router.get('/me', jwtVerify, getLoginUserDetails);
 router.put("/request-reset-password", sendPasswordResetMail);
-router.put("/update-password", updatePassword);
+router.put("/reset-password", restPassword);
 router.put("/update-profile", jwtVerify, upload.single("avatar"), updateProfile)
 router.put("/follow", jwtVerify, follow);
 router.put("/unfollow", jwtVerify, unfollow);

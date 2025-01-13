@@ -148,12 +148,29 @@ export const updateProfile = (key, value) => async (dispatch) => {
 
 export const requestToResetPassword = async (email) => {
   console.log("requestToResetPassword", email);
-  
+
   const toastId = toast.loading("Sending email...");
   try {
     const response = await axios.put(`${userApiRout}/request-reset-password/`, {
       email,
     });
+    if (response.data.success) {
+      toast.dismiss(toastId);
+      toast.success(response.data.message);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    toast.dismiss(toastId);
+    errorToast(error);
+    return false;
+  }
+};
+
+export const resetPassword = async (token, data) => {
+  const toastId = toast.loading("Resetting password...");
+  try {
+    const response = await axios.put(`${userApiRout}/reset-password?token=${token}`, data);
     if (response.data.success) {
       toast.dismiss(toastId);
       toast.success(response.data.message);

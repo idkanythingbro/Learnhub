@@ -289,42 +289,39 @@ const sendPasswordResetMail = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Password reset mail sent on registered email"));
 
 });
-//Update password
-//FIXME -
-const updatePassword = asyncHandler(async (req, res) => {
-  const { userId, userName, email, newPassword, oldPassword, otp } = req.body;
-  console.log("ch");
-  if (!isPasswordValid(newPassword) || !(userId || userName || email)) {
-    throw new ApiError(400, "Invalid Input");
+
+//Reset password
+const restPassword = asyncHandler(async (req, res) => {
+  const { password, confirmPassword } = req.body;
+  const token = req.query.token;
+  // console.log(token);
+
+  if (!token) {
+    throw new ApiError(400, "Invalid request");
   }
-  const user = await User.findOne({
-    $or: [
-      { _id: mongoose.isValidObjectId(userId) ? userId : null },
-      { userName },
-      { email },
-    ],
-  });
+  if (!password || !confirmPassword) {
+    throw new ApiError(400, "Password is required");
+  }
+  if (password !== confirmPassword) {
+    throw new ApiError(400, "Password and confirm password must be same");
+  }
+
+  let decodeToken = {};
+  try {
+    decodeToken = jwt.verify(token, process.env.PASSWORD_RESET_TOKEN_SECRET);
+  } catch (error) {
+    throw new ApiError(400, "Invalid token");
+  }
+
+  const user = await User.findOne({ email: decodeToken.email });
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-  let isPasswordChange = false;
-  if (oldPassword) {
-    const isMatch = await user.isPasswordCorrect(oldPassword);
-    if (!isMatch) {
-      throw new ApiError(401, "Invalid credentials");
-    }
-    isPasswordChange = true;
-  } else if (otp) {
-    isPasswordChange = user.verifyOtp(otp);
-  }
-  if (!isPasswordChange) {
-    throw new ApiError(401, "Invalid credential");
-  }
-  user.password = newPassword;
-  await user.save();
-  res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Password updated successfully"));
+  user.password = password;
+  await user.save({ validateBeforeSave: true });
+
+
+  res.status(200).json(new ApiResponse(200, {}, "Password updated successfully"));
 });
 
 //Update profile
@@ -534,7 +531,7 @@ module.exports = {
   getLoginUserDetails,
   getUserProfile,
   sendPasswordResetMail,
-  updatePassword,
+  restPassword,
   updateProfile,
   follow,
   unfollow,
