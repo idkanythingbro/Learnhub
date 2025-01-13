@@ -20,7 +20,12 @@ import {
   UpdateProfile,
 } from "../_root/pages";
 import EditCourse from "../_root/pages/EditCourse";
+<<<<<<< HEAD
+import CoursePlayer from "../_root/pages/CoursePlayer";
+import UserProfile from "./shared/UserProfile";
+=======
 import ForgotPassword, { UpdatePassWord } from "../_auth/forms/ForgotPassword";
+>>>>>>> 044283c46d51a791ef543e1e4f7d97d5457f0957
 
 const Routing = () => {
   const [user, setUser] = useState(null);
@@ -59,6 +64,8 @@ const Routing = () => {
           <Route path="updateprofile" element={<UpdateProfile />} />
           <Route path="courseprofile" element={<CourseProfile />} />
           <Route path="editprofile" element={<EditCourse />} />
+          <Route path="courseplayer" element={<CoursePlayer />} />
+          <Route path="userprofile" element={<UserProfile />} />
         </Route>
         <Route path="*" element={<h1 className="text-white">NOT fOUND</h1>} />
       </Routes>
