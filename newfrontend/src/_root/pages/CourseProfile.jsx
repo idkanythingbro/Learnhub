@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { enrollCourse, getCourseById, getEnrolledCourses, unenrollCourse } from "../../service/courses.service";
 import { useEffect, useState } from "react";
 import Loader from "./../../components/shared/Loader";
-import Button from "../../components/shared/Button";
 import { timeAgo } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 const CourseProfile = () => {
@@ -112,6 +111,10 @@ const CourseProfile = () => {
                     {course.topics.map((topic) => (
                       <li key={topic.topicName}>{topic.topicName}</li>
                     ))}
+                  </div>
+                  <div>
+                    <h2 className="h3-bold">Prerequsites :</h2>
+                    <p className="small-regular">{course.prerequsite}</p>
                   </div>
                 </div>
               ) : (

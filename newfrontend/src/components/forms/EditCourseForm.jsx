@@ -16,6 +16,7 @@ const EditCourseForm = () => {
     getCourseById(courseId).then((data) => {
       console.log(data);
       setCourse(data);
+      setVideos(data.topics);
     });
   }, []);
   const {
@@ -93,15 +94,6 @@ const EditCourseForm = () => {
   };
 
   const onSubmit = handleSubmit((data) => {
-    // const finalData = {
-    //   courseName: data.courseName || course?.courseName,
-    //   description: data.description || course?.description,
-    //   poster: data.poster || course?.poster,
-    //   prerequsite: data.prerequsite || course?.prerequsite,
-    //   introVideo: data.introVideo || course?.introVideo,
-    //   videos: data.videos,
-    // };
-    // console.log(data);
     updateCourse(courseId, data);
   });
   return (
@@ -226,28 +218,33 @@ const EditCourseForm = () => {
                         className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
                         controls
                       >
-                        <source src={video.preview} type={video.file.type} />
+                        <source
+                          src={video.preview || video.file}
+                          type={video.file.type}
+                        />
                         Your browser does not support the video tag.
                       </video>
                       <div className="w-full ">
-                        <label className="text-blue-300 flex w-full" > Video Number: 
-                        <input
-                          type="text"
-                          value={(course?.topics?.length)+(index + 1)}
-                          disabled
-                          className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit  mr-7"
-                        />
-
+                        <label className="text-blue-300 flex w-full">
+                          {" "}
+                          Video Number:
+                          <input
+                            type="text"
+                            value={index + 1}
+                            disabled
+                            className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit  mr-7"
+                          />
                         </label>
-                        <label className="text-blue-300">Video Name
-                        <input
-                          type="text"
-                          value={video.name}
-                          onChange={(e) =>
-                            handleNameChange(index, e.target.value)
-                          }
-                          className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit mr-7 ml-2"
-                        />
+                        <label className="text-blue-300">
+                          Video Name
+                          <input
+                            type="text"
+                            value={video.name || video.topicName}
+                            onChange={(e) =>
+                              handleNameChange(index, e.target.value)
+                            }
+                            className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit mr-7 ml-2"
+                          />
                         </label>
                       </div>
                       <button
