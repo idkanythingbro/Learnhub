@@ -14,7 +14,7 @@ const EditCourseForm = () => {
   const [course, setCourse] = useState(undefined);
   useEffect(() => {
     getCourseById(courseId).then((data) => {
-      // console.log(data);
+      console.log(data);
       setCourse(data);
     });
   }, []);
@@ -75,6 +75,7 @@ const EditCourseForm = () => {
     multiple: true,
     onDrop,
   });
+
   const handleNameChange = (index, newName) => {
     const updatedVideos = videos.map((video, idx) =>
       idx === index ? { ...video, name: newName } : video
@@ -225,14 +226,27 @@ const EditCourseForm = () => {
                         <source src={video.preview} type={video.file.type} />
                         Your browser does not support the video tag.
                       </video>
-                      <input
-                        type="text"
-                        value={video.name}
-                        onChange={(e) =>
-                          handleNameChange(index, e.target.value)
-                        }
-                        className=" p-2  h-[30px] bg-dark-3 rounded w-full mr-7"
-                      />
+                      <div className="w-full ">
+                        <label className="text-blue-300 flex w-full" > Video Number: 
+                        <input
+                          type="text"
+                          value={index + 1}
+                          disabled
+                          className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit  mr-7"
+                        />
+
+                        </label>
+                        <label className="text-blue-300">Video Name
+                        <input
+                          type="text"
+                          value={video.name}
+                          onChange={(e) =>
+                            handleNameChange(index, e.target.value)
+                          }
+                          className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit mr-7 ml-2"
+                        />
+                        </label>
+                      </div>
                       <button
                         type="button"
                         onClick={() => handleRemove(index)}

@@ -142,7 +142,7 @@ export const getEnrolledCourses = () => async (dispatch) => {
 export const updateCourse = async (courseId, courseData) => {
     const tostId = toast.loading("Updating ...");
     try {
-        // console.log(courseData);
+        console.log(courseData);
 
         const formData = new FormData();
         formData.append('courseName', courseData.courseName);
@@ -153,14 +153,15 @@ export const updateCourse = async (courseId, courseData) => {
         // console.log(courseData.videos);
 
         // Topic
-        courseData.videos?.forEach((topic) => {
+        courseData.videos?.forEach((topic,index) => {
             // console.log(topic);
 
+            // formData.append('topicsNo', index);
             formData.append('topics', topic.name);
             formData.append(`${topic.name}`, topic.file);
         });
 
-        // console.log("F", formData);
+        console.log("F", formData);
 
         const response = await axios.put(`${baseUrl}/courses/update/${courseId}`, formData, {
             withCredentials: true

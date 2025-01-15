@@ -26,6 +26,8 @@ const deleteFiles = (files) => {
 //SECTION - Course
 
 const createNewTopics = async (courseId, topics, files) => {
+    // console.log("Topics",topics);
+
     // Create a map for quick file lookup by fieldname
     const fileMap = files.reduce((map, file) => {
         map[file.fieldname] = file;
@@ -33,7 +35,7 @@ const createNewTopics = async (courseId, topics, files) => {
     }, {});
 
     // Prepare promises for creating topics
-    const promises = topics.map(async (topic) => {
+    const promises = topics.map(async (topic, index) => {
         const file = fileMap[topic];
         if (!file) {
             throw new ApiError(400, `File for topic "${topic}" not found`);
@@ -41,6 +43,7 @@ const createNewTopics = async (courseId, topics, files) => {
         const url = await uploadFile(file, "video", "Course Contents");
         return Topic.create({
             course: courseId,
+            topicNo: index + 1,
             topicName: topic,
             file: url
         });
@@ -308,6 +311,7 @@ const getCourseById = asyncHandler(async (req, res) => {
     }
 
     const topics = await Topic.find({ course: courseId });
+    topics.sort((a, b) => a.topicNo - b.topicNo);
     course = {
         ...course.toObject(), // Convert Mongoose document to plain object
         topics
@@ -362,7 +366,7 @@ const enrolledNewCourse = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { course }, "Course enrolled successfully"));
 })
 
-//FIXME - 
+
 const unenrolledCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
@@ -390,7 +394,7 @@ const unenrolledCourse = asyncHandler(async (req, res) => {
     await userDetails.save();
     res
         .status(200)
-        .json(new ApiResponse(200, {course}, "Course unenrolled successfully"));
+        .json(new ApiResponse(200, { course }, "Course unenrolled successfully"));
 })
 
 const getEnrolledCourses = asyncHandler(async (req, res) => {

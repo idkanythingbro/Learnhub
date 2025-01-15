@@ -6,6 +6,10 @@ const topicSchema = new Schema({
         ref: 'Course',
         required: true
     }, // Reference to Course
+    topicNo:{
+        type: Number,
+        required: true
+    },
     topicName: {
         type: String,
         required: true,
