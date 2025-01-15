@@ -89,15 +89,6 @@ const EditCourseForm = () => {
   };
 
   const onSubmit = handleSubmit((data) => {
-    // const finalData = {
-    //   courseName: data.courseName || course?.courseName,
-    //   description: data.description || course?.description,
-    //   poster: data.poster || course?.poster,
-    //   prerequsite: data.prerequsite || course?.prerequsite,
-    //   introVideo: data.introVideo || course?.introVideo,
-    //   videos: data.videos,
-    // };
-    // console.log(data);
     updateCourse(courseId, data);
   });
   return (

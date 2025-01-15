@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { enrollCourse, getCourseById } from "../../service/courses.service";
 import { useEffect, useState } from "react";
 import Loader from "./../../components/shared/Loader";
-import Button from "../../components/shared/Button";
 import { timeAgo } from "../../utils/utils";
 const CourseProfile = () => {
   const navigate = useNavigate();
@@ -42,13 +41,6 @@ const CourseProfile = () => {
                     <p className="small-regular mb-3 ml-2">
                       {course.description}
                     </p>
-                    {/* <Button
-                      title="Enroll"
-                      id="enrollbutton"
-                      routepath="/courseplayer"
-                      onClick={handelCourseEnroll}
-                      containerClass="hover:bg-yellow-700"
-                    /> */}
                     <button
                       className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full hover:bg-yellow-700 bg-violet-50 px-7 py-3 text-black"
                       onClick={handelCourseEnroll}
@@ -83,6 +75,10 @@ const CourseProfile = () => {
                     {course.topics.map((topic) => (
                       <li key={topic.topicName}>{topic.topicName}</li>
                     ))}
+                  </div>
+                  <div>
+                    <h2 className="h3-bold">Prerequsites :</h2>
+                    <p className="small-regular">{course.prerequsite}</p>
                   </div>
                 </div>
               ) : (

@@ -1,13 +1,10 @@
 import CourseCard from "../../components/shared/CourseCard";
 import Loader from "../../components/shared/Loader";
-
 import { useEffect, useState } from "react";
 import { getAllCourses } from "../../service/courses.service";
 import { useDispatch, useSelector } from "react-redux";
-import { set } from "react-hook-form";
+
 const Explore = () => {
-  // const isCoursesLoading = true;
-  // const courses = null;
   const [courses, setCourses] = useState(null);
   const dispatch = useDispatch();
   const [isCoursesLoading, setIsCoursesLoading] = useState(true);
@@ -23,8 +20,7 @@ const Explore = () => {
     setIsCoursesLoading(coursesLoading);
   }, [coursesLoading]);
   useEffect(() => {
-    console.log("coursesData", coursesData);
-
+    // console.log("coursesData", coursesData);
     setCourses(coursesData);
   }, [coursesData]);
   return (
