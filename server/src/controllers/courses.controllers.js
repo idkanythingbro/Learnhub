@@ -1,4 +1,3 @@
-const e = require("express");
 const { Course, Topic } = require("../models/course.model");
 const { uploadFileToCloudinary, uploadLargeFileToCloudinary, deleteFromCloudinary } = require("../service/cloudinary.service");
 const ApiError = require("../utils/ApiErrors");
@@ -27,23 +26,42 @@ const deleteFiles = (files) => {
 
 const createNewTopics = async (courseId, topics, files) => {
     // console.log("Topics",topics);
+    if (topics && Array.isArray(topics) == false) {
+        topics = [topics];
+    }
+
+
+
 
     // Create a map for quick file lookup by fieldname
-    const fileMap = files.reduce((map, file) => {
+    const fileMap = files.reduce((map, file) => {        
         map[file.fieldname] = file;
         return map;
     }, {});
+    // console.log(fileMap[to]);
+
+
+    //find maximum topicNo from the database if it is empty then set it to 0
+    const max = await Topic.findOne({ course: courseId }).sort({ topicNo: -1 });
+    // console.log(max);
+    let topicNo = 0;
+    if (max) {
+        topicNo = max.topicNo;
+    }
+
+
+
 
     // Prepare promises for creating topics
     const promises = topics.map(async (topic, index) => {
-        const file = fileMap[topic];
+        const file = fileMap[topic];        
         if (!file) {
             throw new ApiError(400, `File for topic "${topic}" not found`);
         }
         const url = await uploadFile(file, "video", "Course Contents");
         return Topic.create({
             course: courseId,
-            topicNo: index + 1,
+            topicNo: topicNo + (index + 1),
             topicName: topic,
             file: url
         });
@@ -136,11 +154,13 @@ const createNewCourse = asyncHandler(async (req, res) => {
 })
 //TODO - 
 const updateCourse = asyncHandler(async (req, res) => {
-    // console.log("update course");
+    console.log("update course");
     const { courseName, description, prerequsite, topics } = req.body;
     const courseId = req.params.courseId;
     const userId = req.user._id;
     const course = await Course.findOne({ _id: courseId, owner: userId });
+    // console.log(topics);
+
     if (!course) {
         res.status(404);
         throw new ApiError(404, "Course not found");
@@ -181,6 +201,8 @@ const updateCourse = asyncHandler(async (req, res) => {
     await Course.updateOne({
         _id: course._id
     }, updatedCourse);
+    // console.log("Check");
+
 
     const result = await createNewTopics(course._id, topics, req.files);
     // console.log(result);

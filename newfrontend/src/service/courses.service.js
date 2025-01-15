@@ -153,10 +153,7 @@ export const updateCourse = async (courseId, courseData) => {
         // console.log(courseData.videos);
 
         // Topic
-        courseData.videos?.forEach((topic,index) => {
-            // console.log(topic);
-
-            // formData.append('topicsNo', index);
+        courseData.videos?.forEach((topic, index) => {
             formData.append('topics', topic.name);
             formData.append(`${topic.name}`, topic.file);
         });

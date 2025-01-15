@@ -230,7 +230,7 @@ const EditCourseForm = () => {
                         <label className="text-blue-300 flex w-full" > Video Number: 
                         <input
                           type="text"
-                          value={index + 1}
+                          value={(course?.topics?.length)+(index + 1)}
                           disabled
                           className=" p-2  h-[30px] bg-dark-3 text-white rounded w-fit  mr-7"
                         />
