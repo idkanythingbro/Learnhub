@@ -1,7 +1,7 @@
 import CourseCard from "../../components/shared/CourseCard";
 import Loader from "../../components/shared/Loader";
 import { useEffect, useState } from "react";
-import { getAllCourses } from "../../service/courses.service";
+import { getAllCourses, getEnrolledCourses } from "../../service/courses.service";
 import { useDispatch, useSelector } from "react-redux";
 
 const Explore = () => {
@@ -15,6 +15,7 @@ const Explore = () => {
 
   useEffect(() => {
     dispatch(getAllCourses());
+    // dispatch(getEnrolledCourses())
   }, []);
   useEffect(() => {
     setIsCoursesLoading(coursesLoading);

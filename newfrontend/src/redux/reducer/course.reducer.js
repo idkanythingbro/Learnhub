@@ -36,7 +36,15 @@ const courseSlice = createSlice({
         },
         setEnrolledCourses: (state, action) => {
             state.enrolledCourses = action.payload;
+        },
+        addNewEnrolledCourse: (state, action) => {
+            state.enrolledCourses.push(action.payload);
+        },
+        removeACourseFromEnrolled: (state, action) => {
+            state.enrolledCourses = state.enrolledCourses.filter((course) => course._id !== action.payload._id);
+
         }
+
     }
 })
 
@@ -48,7 +56,9 @@ export const {
     setCourseMessage,
     setCourseSuccess,
     setCreatedCourses,
-    setEnrolledCourses
+    setEnrolledCourses,
+    addNewEnrolledCourse,
+    removeACourseFromEnrolled
 } = courseSlice.actions;
 
 export default courseSlice.reducer

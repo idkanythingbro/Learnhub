@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const upload = require('../middleware/multer.middleware');
-const { createNewCourse, addNewTopic, deleteCourse, deleteTopic, getAllCourses, enrolledNewCourse, getCreatedCourses, getEnrolledCourses, getCourseById, updateCourse } = require('../controllers/courses.controllers');
+const { createNewCourse, addNewTopic, deleteCourse, deleteTopic, getAllCourses, enrolledNewCourse, getCreatedCourses, getEnrolledCourses, getCourseById, updateCourse, unenrolledCourse } = require('../controllers/courses.controllers');
 const { jwtVerify } = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -16,6 +16,8 @@ router.put('/update/:courseId', jwtVerify, upload.any(), updateCourse);
 router.post("/topic/:courseId", jwtVerify, upload.single("content"), addNewTopic);
 
 router.patch("/enroll/:courseId", jwtVerify, enrolledNewCourse);
+router.patch("/unenroll/:courseId", jwtVerify, unenrolledCourse);
+
 
 router.delete("/:courseId", jwtVerify, deleteCourse);
 router.delete("/topic/:topicId", jwtVerify, deleteTopic);

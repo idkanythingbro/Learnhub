@@ -4,7 +4,7 @@ import { timeAgo } from "../../utils/utils";
 import LikeButton from "./LikeButton";
 
 const CourseCard = ({ course }) => {
-  console.log(course);
+  // console.log(course);
   return (
     <Link to={`/courseprofile?courseId=${course._id}`}>
       <div className="bg-dark-2 rounded-3xl border border-dark-4 p-5 lg:p-7 w-full max-w-screen-sm">
