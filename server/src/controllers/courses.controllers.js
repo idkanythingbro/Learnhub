@@ -356,17 +356,17 @@ const enrolledNewCourse = asyncHandler(async (req, res) => {
     }
     userDetails.addCourse(courseId);
 
+
     // await userDetails.save();
     res.status(200)
-        .json(new ApiResponse(200, {}, "Course enrolled successfully"));
+        .json(new ApiResponse(200, { course }, "Course enrolled successfully"));
 })
 
 //FIXME - 
 const unenrolledCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
-    const user = await
-        User.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
         throw new ApiError(404, "User not found");
     }
@@ -390,7 +390,7 @@ const unenrolledCourse = asyncHandler(async (req, res) => {
     await userDetails.save();
     res
         .status(200)
-        .json(new ApiResponse(200, {}, "Course unenrolled successfully"));
+        .json(new ApiResponse(200, {course}, "Course unenrolled successfully"));
 })
 
 const getEnrolledCourses = asyncHandler(async (req, res) => {
@@ -414,6 +414,7 @@ module.exports = {
     getCourseById,
     getCreatedCourses,
     enrolledNewCourse,
+    unenrolledCourse,
     getEnrolledCourses,
     updateCourse
 }

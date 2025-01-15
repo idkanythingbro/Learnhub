@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import { setCourseLoading, setCourses, setCourseSuccess, setCreatedCourses, setEnrolledCourses } from "../redux/reducer/course.reducer";
+import { addNewEnrolledCourse, removeACourseFromEnrolled, setCourseLoading, setCourses, setCourseSuccess, setCreatedCourses, setEnrolledCourses } from "../redux/reducer/course.reducer";
 import { errorToast } from "../utils/errorToast";
 const baseUrl = import.meta.env.VITE_SERVER_BASE_URL
 export const createNewCourse = async (courseData) => {
@@ -68,14 +68,38 @@ export const getCourseById = async (courseId) => {
     }
 }
 
-export const enrollCourse = async (courseId) => {
+export const enrollCourse = (courseId) => async (dispatch) => {
     try {
         const response = await axios.patch(`${baseUrl}/courses/enroll/${courseId}`, {}, {
             withCredentials: true
         });
 
-        console.log(response.data);
-        return response.data.success;
+        if (response.data.success) {
+            //    dispatch();
+            // console.log(response.data.data.course);
+            dispatch(addNewEnrolledCourse(response.data.data.course));
+
+        }
+
+    } catch (error) {
+        // console.log(error);
+        errorToast(error);
+        return false
+    }
+}
+
+export const unenrollCourse = (courseId) => async (dispatch) => {
+    try {
+        const response = await axios.patch(`${baseUrl}/courses/unenroll/${courseId}`, {}, {
+            withCredentials: true
+        });
+
+        if (response.data.success) {
+            //    dispatch();
+            // console.log(response.data.data.course);
+            dispatch(removeACourseFromEnrolled(response.data.data.course));
+
+        }
 
     } catch (error) {
         // console.log(error);
@@ -109,6 +133,7 @@ export const getEnrolledCourses = () => async (dispatch) => {
         return response.data.success;
 
     } catch (error) {
+        errorToast(error);
         console.log(error);
         return false
     }
@@ -125,12 +150,12 @@ export const updateCourse = async (courseId, courseData) => {
         formData.append('introVideo', courseData.introVideo[0]); // File object
         formData.append('poster', courseData.poster[0]); // File object
         formData.append('prerequsite', courseData.prerequsite);
-// console.log(courseData.videos);
+        // console.log(courseData.videos);
 
         // Topic
-        courseData.videos?.forEach((topic)=> {
+        courseData.videos?.forEach((topic) => {
             // console.log(topic);
-            
+
             formData.append('topics', topic.name);
             formData.append(`${topic.name}`, topic.file);
         });

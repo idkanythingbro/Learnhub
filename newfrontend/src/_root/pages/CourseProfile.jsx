@@ -1,27 +1,42 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { enrollCourse, getCourseById } from "../../service/courses.service";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { enrollCourse, getCourseById, getEnrolledCourses, unenrollCourse } from "../../service/courses.service";
 import { useEffect, useState } from "react";
 import Loader from "./../../components/shared/Loader";
 import Button from "../../components/shared/Button";
 import { timeAgo } from "../../utils/utils";
+import { useDispatch, useSelector } from "react-redux";
 const CourseProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const searchParams = new URLSearchParams(location.search);
   const courseId = searchParams.get("courseId");
   const [course, setCourse] = useState(undefined);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const enrollCourses = useSelector((state) => state.courseReducer.enrolledCourses);
   const handelCourseEnroll = () => {
-    // alert(courseId);
-    enrollCourse(courseId);
-    navigate("/courseplayer");
+    dispatch(enrollCourse(courseId));
   };
-  useEffect(() => {
-    getCourseById(courseId).then((data) => {
-      console.log(data);
+  const handelEnrollmentCancel = () => {
+    dispatch(unenrollCourse(courseId));
 
+  }
+  useEffect(() => {
+    dispatch(getEnrolledCourses())
+    getCourseById(courseId).then((data) => {
       setCourse(data);
     });
   }, []);
+
+  useEffect(() => {
+
+    if (enrollCourses) {
+      const isContain = enrollCourses.find((course) => course._id === courseId);
+      setIsEnrolled(isContain ? true : false);
+    }
+
+  }, [enrollCourses])
+
   return (
     <div className="bg-black text-white flex flex-1">
       {
@@ -42,21 +57,35 @@ const CourseProfile = () => {
                     <p className="small-regular mb-3 ml-2">
                       {course.description}
                     </p>
-                    {/* <Button
-                      title="Enroll"
-                      id="enrollbutton"
-                      routepath="/courseplayer"
-                      onClick={handelCourseEnroll}
-                      containerClass="hover:bg-yellow-700"
-                    /> */}
-                    <button
-                      className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full hover:bg-yellow-700 bg-violet-50 px-7 py-3 text-black"
-                      onClick={handelCourseEnroll}
-                    >
-                      <span className="relative font-general text-xs uppercase overflow-hidden inline-flex">
-                        Enroll
-                      </span>
-                    </button>
+
+                    <div>
+                      {!isEnrolled ? (
+                        <button
+                          className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full hover:bg-yellow-700 bg-violet-50 px-7 py-3 text-black"
+                          onClick={handelCourseEnroll}
+                        >
+                          <span className="relative font-general text-xs uppercase overflow-hidden inline-flex">
+                            Enroll
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="flex gap-3">
+                          <Link
+                            to={`/courseplayer?courseId=${courseId}`}
+                            className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full hover:bg-yellow-700 bg-violet-50 px-7 py-3 text-black"
+                          >
+                            <span className="relative font-general text-xs uppercase overflow-hidden inline-flex">Get Started</span>
+                          </Link>
+                          <button
+                            className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full hover:bg-red  px-7 py-3 border border-red"
+                            onClick={handelEnrollmentCancel}
+                          >
+                            <span className="relative font-general text-xs uppercase overflow-hidden inline-flex">Cancel Enroll</span>
+                          </button>
+
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <p className="small-regular">
@@ -66,7 +95,7 @@ const CourseProfile = () => {
                         target="_blank"
                         className="hover:text-yellow-700 base-medium"
                       >
-                        {course.owner.name}
+                        {course.owner?.name}
                       </a>
                     </p>
                     <p className="small-regular">

@@ -53,8 +53,8 @@ const userDetailsSchema = new mongoose.Schema({
                 required: true
             },
             completedTopic: {
-                type: Number,
-                default: 0
+                type: [mongoose.Schema.Types.ObjectId],
+                default: []
             },
             totalTopic: {
                 type: Number,

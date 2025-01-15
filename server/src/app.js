@@ -80,7 +80,7 @@ passport.use(new GithubStrategy({
 },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            // console.log("profile", profile);
+            console.log("profile", profile);
             let user = await OauthUser.findOne({ oauthId: profile.id });
 
             if (!user) {
