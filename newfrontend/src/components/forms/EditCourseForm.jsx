@@ -83,7 +83,10 @@ const EditCourseForm = () => {
     setVideos(updatedVideos);
     setValue("videos", updatedVideos, { shouldValidate: true });
   };
-  const handleRemove = (index) => {
+  const handleRemove = (index,id) => {
+    if (id) {
+      console.log(id);
+    }
     const updatedVideos = videos.filter((_, idx) => idx !== index);
     setVideos(updatedVideos);
     setValue("videos", updatedVideos, { shouldValidate: true });
@@ -249,7 +252,7 @@ const EditCourseForm = () => {
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleRemove(index)}
+                        onClick={() => handleRemove(index,video._id)}
                         className="ml-[10px] bg-[#ff4d4f] text-white border-none py-[5px] px-[10px] cursor-pointer rounded"
                       >
                         Remove
