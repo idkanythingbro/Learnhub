@@ -37,7 +37,7 @@ const Dashboard = () => {
           <h2 className="h3-bold md:h2-bold text-left w-full">Dashboard</h2>
         </div>
         <div className="flex flex-1">
-          <div className="flex flex-col flex-1 items-center gap-10 overflow-scroll py-10 px-5 md:px-8 lg:p-14 custom-scrollbar">
+          <div className="flex flex-col flex-1 items-center gap-10 py-10 px-5 md:px-8 lg:p-14 ">
             <div className=" max-w-screen-xl flex flex-col items-center w-full gap-6 md:gap-9">
               <h2 className="text-light-2 h3-bold  text-left w-full">
                 Created Courses
