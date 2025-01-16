@@ -1,19 +1,35 @@
-import { useEffect, useState } from "react";
-import { getCourseById } from "../../service/courses.service";
+import { useEffect, useRef, useState } from "react";
+import { getCourseById, markTopicAsCompleted } from "../../service/courses.service";
 import Loader from "./../../components/shared/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfile } from "../../service/user.service";
 
 const CoursePlayer = () => {
+  const dispatch = useDispatch();
   const [videoList, setVideoList] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const searchParams = new URLSearchParams(location.search);
   const courseId = searchParams.get("courseId");
   const [course, setCourse] = useState(undefined);
+  const [currentVideo, setCurrentVideo] = useState(undefined);
+  const [duration, setDuration] = useState(0); // Total duration of the video
+  const [isCompleted, setIsCompleted] = useState(false); // Check if video has been completed
+  const videoRef = useRef(null);
+  // const loggedInUserData = useSelector((state) => state.userReducer.user);
+  const loggedInProfile = useSelector((state) => state.userReducer.profile);
+
   useEffect(() => {
+    dispatch(getProfile(loggedInProfile?._id));
     getCourseById(courseId).then((data) => {
       setCourse(data);
       setVideoList(data.topics);
     });
   }, []);
+
+  // useEffect(() => {
+  //   // console.log(loggedInProfile);
+
+  // }, [loggedInProfile])
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % videoList.length);
@@ -29,6 +45,55 @@ const CoursePlayer = () => {
     );
   };
 
+  const handleLoadedMetadata = (videoId) => {
+    const video = videoRef.current;
+    if (video) {
+      setDuration(video.duration); // Set the video duration
+      setIsCompleted(checkCompleted(videoId)); // Set the video completion status
+      setCurrentVideo(videoId);
+    }
+  };
+
+  // Handler for when the current time updates
+  const handleTimeUpdate = (videoId) => {
+    const video = videoRef.current;
+    // console.log(video);
+
+    if (video) {
+      // Total duration of the video
+      const current = video.currentTime;
+      if (!isCompleted && current / duration >= 0.8) {
+        // markAsACompletedVideo
+        markAsACompletedVideo(videoId);
+      }
+
+    }
+  };
+
+  const markAsACompletedVideo = (videoId) => {
+    // alert("Video Completed" + videoId);
+    setIsCompleted(true);
+    markTopicAsCompleted(courseId, videoId).then((data) => {
+      // console.log(data);
+      setIsCompleted(data);
+      if (data) {
+        dispatch(getProfile(loggedInProfile?._id));
+      }
+
+    })
+  }
+
+  const checkCompleted = (videoId) => {
+    const currentCourse = loggedInProfile.enrolledCourses?.find(course => course.course === courseId);
+    const currentVideo = currentCourse.completedTopic?.find(video => video === videoId);
+    if (currentVideo) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
   const handleEnded = () => {
     handleNext();
   };
@@ -41,8 +106,12 @@ const CoursePlayer = () => {
               {course.courseName}
             </h1>
             <video
+              ref={videoRef}
               src={videoList[currentIndex].file}
               controls
+              onLoadedMetadata={() => handleLoadedMetadata(videoList[currentIndex]._id)} // Fired when metadata is loaded
+              onTimeUpdate={() => handleTimeUpdate(videoList[currentIndex]._id)} // Fired when the current playback position changes
+
               className="object-contain h-[360px] lg:h-[720px] w-[1080px]"
               onEnded={handleEnded}
             />
@@ -56,8 +125,19 @@ const CoursePlayer = () => {
             </div>
             <h2>Topics</h2>
             <ul className="flex flex-col gap-5 flex-center w-full">
-              {console.log(videoList)}
+              {/* {console.log(videoList)} */}
               {videoList.map((topic, index) => {
+
+                const isCurrentVideo = topic._id === currentVideo; // Check if it's the current video
+                const isCompleted = checkCompleted(topic._id); // Check if the video is completed
+
+                const textColorClass = isCurrentVideo
+                  ? "text-orange-500" // Orange for the current video
+                  : isCompleted
+                    ? "text-green-500" // Green for completed videos
+                    : "text-white"; // White for other videos
+
+
                 return (
                   <li
                     key={index}
@@ -68,7 +148,9 @@ const CoursePlayer = () => {
                       src={topic.file}
                       className="h-[50px] object-contain rounded-sm bg-dark-4"
                     />
-                    <h3>{topic.topicName}</h3>
+                    <h3
+                      className={` ${textColorClass}`}
+                    >{topic.topicName}</h3>
                   </li>
                 );
               })}

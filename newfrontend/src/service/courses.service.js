@@ -195,3 +195,22 @@ export const deleteTopic = async (topicId) => {
 
     }
 }
+
+export const markTopicAsCompleted = async (courseId,topicId) => {
+    const tostId = toast.loading("Completing ...");
+    try {
+        const response = await axios.patch(`${baseUrl}/courses/topic/complete/`, { courseId,topicId }, {
+            withCredentials: true
+        });
+
+        toast.dismiss(tostId);
+        toast.success("Topic completed successfully");
+        return response.data.success;
+        // console.log("D", response.data);
+    } catch (error) {
+        toast.dismiss(tostId);
+        console.log(error);
+        return false;
+
+    }
+}

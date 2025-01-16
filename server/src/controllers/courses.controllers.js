@@ -25,15 +25,19 @@ const deleteFiles = (files) => {
 //SECTION - Course
 const updateTopicNo = async (courseId) => {
     // Fetch all topics for the course sorted by creation order (_id default)
-    const topics = await Topic.find({ course: courseId }).sort({ _id: 1 });
+    const topics = await Topic.find({ course: courseId }).sort({ topicNo: 1 });
+// console.log(topics);
 
     // Reassign indices based on their natural order
     await Promise.all(
         topics.map((topic, index) => {
-            topic.index = index; // Recalculate index
+            // console.log();
+            topic.topicNo = index+1; // Recalculate index
             return topic.save(); // Save the updated topic
         })
     );
+
+    return true;
 };
 
 const createNewTopics = async (courseId, topics, files) => {
@@ -42,17 +46,12 @@ const createNewTopics = async (courseId, topics, files) => {
     if (topics && Array.isArray(topics) == false) {
         topics = [topics];
     }
-
-
-
-
     // Create a map for quick file lookup by fieldname
     const fileMap = files.reduce((map, file) => {
         map[file.fieldname] = file;
         return map;
     }, {});
     // console.log(fileMap[to]);
-
 
     //find maximum topicNo from the database if it is empty then set it to 0
     const max = await Topic.findOne({ course: courseId }).sort({ topicNo: -1 });
@@ -61,9 +60,6 @@ const createNewTopics = async (courseId, topics, files) => {
     if (max) {
         topicNo = max.topicNo;
     }
-
-
-
 
     // Prepare promises for creating topics
     const promises = topics.map(async (topic, index) => {
@@ -298,7 +294,7 @@ const addNewTopic = asyncHandler(async (req, res) => {
         "Topic Added success"
     ))
 })
-//FIXME - 
+
 const deleteTopic = asyncHandler(async (req, res) => {
     const { topicId } = req.params;
     const userId = req.user._id;
@@ -313,7 +309,7 @@ const deleteTopic = asyncHandler(async (req, res) => {
         throw new ApiError("Unauthorize")
     }
     //NOTE - Delete image,videos and pdf from cloudinary
-    const result = await deleteFromCloudinary(topic.contentFile, "video");
+    const result = await deleteFromCloudinary(topic.file, "video");
     // console.log(result);
 
     await Topic.deleteOne({ _id: topicId });
@@ -450,6 +446,30 @@ const getEnrolledCourses = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, courses, "Enrolled courses"));
 })
 
+// Add a topic in marked as completed
+const markTopicAsCompleted = asyncHandler(async (req, res) => {
+    const { courseId, topicId } = req.body;
+    const userId = req.user._id;
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
+        throw new ApiError(404, "User details not found");
+    }
+    const courseDetails = userDetails.enrolledCourses.find(courseDetails => courseDetails.course.toString() === courseId.toString());
+    if (!courseDetails) {
+        throw new ApiError(404, "Course not enrolled");
+    }
+    // console.log( courseDetails.completedTopic);
+    
+    const topic = courseDetails.completedTopic.find(topic => topic.toString() === topicId.toString());
+    if (topic) {
+        throw new ApiError(400, "Topic already completed");
+    }
+    courseDetails.completedTopic.push( topicId );
+    await userDetails.save();
+    res.status(200).json(new ApiResponse(200, {}, "Topic successfully completed"));
+
+});
+
 module.exports = {
     createNewCourse,
     addNewTopic,
@@ -461,5 +481,6 @@ module.exports = {
     enrolledNewCourse,
     unenrolledCourse,
     getEnrolledCourses,
-    updateCourse
+    updateCourse,
+    markTopicAsCompleted
 }
