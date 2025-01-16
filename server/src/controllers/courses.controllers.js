@@ -23,9 +23,22 @@ const deleteFiles = (files) => {
 };
 
 //SECTION - Course
+const updateTopicNo = async (courseId) => {
+    // Fetch all topics for the course sorted by creation order (_id default)
+    const topics = await Topic.find({ course: courseId }).sort({ _id: 1 });
+
+    // Reassign indices based on their natural order
+    await Promise.all(
+        topics.map((topic, index) => {
+            topic.index = index; // Recalculate index
+            return topic.save(); // Save the updated topic
+        })
+    );
+};
 
 const createNewTopics = async (courseId, topics, files) => {
-    // console.log("Topics",topics);
+    console.log("Topics", topics);
+    // return;
     if (topics && Array.isArray(topics) == false) {
         topics = [topics];
     }
@@ -34,7 +47,7 @@ const createNewTopics = async (courseId, topics, files) => {
 
 
     // Create a map for quick file lookup by fieldname
-    const fileMap = files.reduce((map, file) => {        
+    const fileMap = files.reduce((map, file) => {
         map[file.fieldname] = file;
         return map;
     }, {});
@@ -54,7 +67,10 @@ const createNewTopics = async (courseId, topics, files) => {
 
     // Prepare promises for creating topics
     const promises = topics.map(async (topic, index) => {
-        const file = fileMap[topic];        
+
+
+
+        const file = fileMap[topic];
         if (!file) {
             throw new ApiError(400, `File for topic "${topic}" not found`);
         }
@@ -65,6 +81,8 @@ const createNewTopics = async (courseId, topics, files) => {
             topicName: topic,
             file: url
         });
+
+
     });
 
     // Wait for all promises to settle
@@ -289,16 +307,17 @@ const deleteTopic = asyncHandler(async (req, res) => {
         res.status(404)
         throw new ApiError(404, "Topic founded");
     }
-    const course = await Course.findOne({ _id: topic.courseId, ownerId: userId });
+    const course = await Course.findOne({ _id: topic.course, owner: userId });
     if (!course) {
         res.status(400);
         throw new ApiError("Unauthorize")
     }
     //NOTE - Delete image,videos and pdf from cloudinary
-    const result = await deleteFromCloudinary(topic.contentFile);
+    const result = await deleteFromCloudinary(topic.contentFile, "video");
     // console.log(result);
 
     await Topic.deleteOne({ _id: topicId });
+    await updateTopicNo(course._id);
     res.status(200).json(new ApiResponse(
         200,
         {},

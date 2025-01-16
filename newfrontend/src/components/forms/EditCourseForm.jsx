@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { getCourseById, updateCourse } from "../../service/courses.service";
+import { deleteTopic, getCourseById, updateCourse } from "../../service/courses.service";
 import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -84,13 +84,21 @@ const EditCourseForm = () => {
     setVideos(updatedVideos);
     setValue("videos", updatedVideos, { shouldValidate: true });
   };
-  const handleRemove = (index,id) => {
+  const handleRemove = (index, id) => {
     if (id) {
-      console.log(id);
+      // alert(id);
+      deleteTopic(id).then((data) => {
+        // console.log(data);
+        const updatedVideos = videos.filter((video) => video._id !== id);
+        setVideos(updatedVideos);
+      });
     }
-    const updatedVideos = videos.filter((_, idx) => idx !== index);
-    setVideos(updatedVideos);
-    setValue("videos", updatedVideos, { shouldValidate: true });
+    else {
+      const updatedVideos = videos.filter((_, idx) => idx !== index);
+      setVideos(updatedVideos);
+      setValue("videos", updatedVideos, { shouldValidate: true });
+    }
+
   };
 
   const onSubmit = handleSubmit((data) => {
@@ -249,7 +257,7 @@ const EditCourseForm = () => {
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleRemove(index,video._id)}
+                        onClick={() => handleRemove(index, video._id)}
                         className="ml-[10px] bg-[#ff4d4f] text-white border-none py-[5px] px-[10px] cursor-pointer rounded"
                       >
                         Remove

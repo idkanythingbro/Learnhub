@@ -154,8 +154,11 @@ export const updateCourse = async (courseId, courseData) => {
 
         // Topic
         courseData.videos?.forEach((topic, index) => {
-            formData.append('topics', topic.name);
-            formData.append(`${topic.name}`, topic.file);
+            if (!(topic._id)) {
+                formData.append('topics', topic.name);
+                formData.append(`${topic.name}`, topic.file);
+            }
+            
         });
 
         console.log("F", formData);
@@ -170,6 +173,25 @@ export const updateCourse = async (courseId, courseData) => {
     } catch (error) {
         toast.dismiss(tostId);
         console.log(error);
+
+    }
+}
+
+export const deleteTopic = async (topicId) => {
+    const tostId = toast.loading("Deleting ...");
+    try {
+        const response = await axios.delete(`${baseUrl}/courses/topic/${topicId}`, {
+            withCredentials: true
+        });
+
+        toast.dismiss(tostId);
+        toast.success("Course deleted successfully");
+        return response.data.success;
+        // console.log("D", response.data);
+    } catch (error) {
+        toast.dismiss(tostId);
+        console.log(error);
+        return false;
 
     }
 }
