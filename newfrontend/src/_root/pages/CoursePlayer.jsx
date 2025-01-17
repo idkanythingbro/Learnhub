@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { getCourseById, markTopicAsCompleted } from "../../service/courses.service";
+import {
+  getCourseById,
+  markTopicAsCompleted,
+} from "../../service/courses.service";
 import Loader from "./../../components/shared/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile } from "../../service/user.service";
+import { FaCirclePlay } from "react-icons/fa6";
 
 const CoursePlayer = () => {
   const dispatch = useDispatch();
@@ -12,6 +16,7 @@ const CoursePlayer = () => {
   const courseId = searchParams.get("courseId");
   const [course, setCourse] = useState(undefined);
   const [currentVideo, setCurrentVideo] = useState(undefined);
+  const [currentTopic, setCurrentTopic] = useState(undefined);
   const [duration, setDuration] = useState(0); // Total duration of the video
   const [isCompleted, setIsCompleted] = useState(false); // Check if video has been completed
   const videoRef = useRef(null);
@@ -23,6 +28,7 @@ const CoursePlayer = () => {
     getCourseById(courseId).then((data) => {
       setCourse(data);
       setVideoList(data.topics);
+      setCurrentTopic(data.topics[0].topicName);
     });
   }, []);
 
@@ -35,8 +41,9 @@ const CoursePlayer = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % videoList.length);
   };
 
-  const handleVideoSelect = (index) => {
+  const handleVideoSelect = (index, topicName) => {
     setCurrentIndex(index);
+    setCurrentTopic(topicName);
   };
 
   const handlePrev = () => {
@@ -66,7 +73,6 @@ const CoursePlayer = () => {
         // markAsACompletedVideo
         markAsACompletedVideo(videoId);
       }
-
     }
   };
 
@@ -79,20 +85,22 @@ const CoursePlayer = () => {
       if (data) {
         dispatch(getProfile(loggedInProfile?._id));
       }
-
-    })
-  }
+    });
+  };
 
   const checkCompleted = (videoId) => {
-    const currentCourse = loggedInProfile.enrolledCourses?.find(course => course.course === courseId);
-    const currentVideo = currentCourse.completedTopic?.find(video => video === videoId);
+    const currentCourse = loggedInProfile.enrolledCourses?.find(
+      (course) => course.course === courseId
+    );
+    const currentVideo = currentCourse.completedTopic?.find(
+      (video) => video === videoId
+    );
     if (currentVideo) {
       return true;
     } else {
       return false;
     }
-  }
-
+  };
 
   const handleEnded = () => {
     handleNext();
@@ -102,19 +110,28 @@ const CoursePlayer = () => {
       {course !== undefined ? (
         course ? (
           <div className="text-white">
-            <h1 className="h2-bold mt-5 mb-5 w-full justify-center flex">
-              {course.courseName}
-            </h1>
+            <div className="flex mt-5 mb-5 w-full justify-center ">
+              <img
+                src="/icons/playvideoicon.svg"
+                alt="icon"
+                className="w-10 h-10 mr-3"
+              />
+              <h1 className="h2-bold ">{course.courseName}</h1>
+            </div>
             <video
               ref={videoRef}
               src={videoList[currentIndex].file}
               controls
-              onLoadedMetadata={() => handleLoadedMetadata(videoList[currentIndex]._id)} // Fired when metadata is loaded
+              onLoadedMetadata={() =>
+                handleLoadedMetadata(videoList[currentIndex]._id)
+              } // Fired when metadata is loaded
               onTimeUpdate={() => handleTimeUpdate(videoList[currentIndex]._id)} // Fired when the current playback position changes
-
               className="object-contain h-[360px] lg:h-[720px] w-[1080px]"
               onEnded={handleEnded}
             />
+            <h1 className="h2-bold mt-5 mb-5 w-full justify-center flex text-white">
+              {currentTopic}
+            </h1>
             <div className="flex flex-row justify-between m-3 text-yellow-600">
               <button onClick={handlePrev} disabled={videoList.length <= 1}>
                 Previous
@@ -127,30 +144,28 @@ const CoursePlayer = () => {
             <ul className="flex flex-col gap-5 flex-center w-full">
               {/* {console.log(videoList)} */}
               {videoList.map((topic, index) => {
-
                 const isCurrentVideo = topic._id === currentVideo; // Check if it's the current video
                 const isCompleted = checkCompleted(topic._id); // Check if the video is completed
 
                 const textColorClass = isCurrentVideo
                   ? "text-orange-500" // Orange for the current video
                   : isCompleted
-                    ? "text-green-500" // Green for completed videos
-                    : "text-white"; // White for other videos
-
+                  ? "text-green-500" // Green for completed videos
+                  : "text-white"; // White for other videos
 
                 return (
                   <li
                     key={index}
-                    className={`flex gap-10  items-center justify-between px-5 py-1 bg-dark-3 rounded-lg w-full ${isCurrentVideo ? "border-2 border-orange-500" : ""}`}
-                    onClick={() => handleVideoSelect(index)}
+                    className={`flex gap-10  items-center justify-between px-5 py-1 bg-dark-3 rounded-lg w-full ${
+                      isCurrentVideo ? "border-2 border-orange-500" : ""
+                    }`}
+                    onClick={() => handleVideoSelect(index, topic.topicName)}
                   >
                     <video
                       src={topic.file}
                       className="h-[50px] object-contain rounded-sm bg-dark-4"
                     />
-                    <h3
-                      className={` ${textColorClass}`}
-                    >{topic.topicName}</h3>
+                    <h3 className={` ${textColorClass}`}>{topic.topicName}</h3>
                   </li>
                 );
               })}
