@@ -177,6 +177,26 @@ export const updateCourse = async (courseId, courseData) => {
     }
 }
 
+export const updateTopic = async (topicId, topicName) => {
+    const tostId = toast.loading("Updating ...");
+    try {
+        // console.log(topicData);
+
+        const response = await axios.put(`${baseUrl}/courses/topic/${topicId}`, {topicName}, {
+            withCredentials: true
+        })
+
+        toast.dismiss(tostId);
+        toast.success("Topic updated successfully");
+        return response.data.success;
+        // console.log("D", response.data);
+    } catch (error) {
+        toast.dismiss(tostId);
+        console.log(error);
+        return false;
+    }
+}
+
 export const deleteTopic = async (topicId) => {
     const tostId = toast.loading("Deleting ...");
     try {

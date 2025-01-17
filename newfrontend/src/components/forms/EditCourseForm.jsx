@@ -3,6 +3,7 @@ import {
   deleteTopic,
   getCourseById,
   updateCourse,
+  updateTopic,
 } from "../../service/courses.service";
 import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
@@ -18,12 +19,15 @@ const EditCourseForm = () => {
   const searchParams = new URLSearchParams(location.search);
   const courseId = searchParams.get("courseId");
   const [course, setCourse] = useState(undefined);
-  useEffect(() => {
+  const fetchCourse = () => {
     getCourseById(courseId).then((data) => {
       console.log(data);
       setCourse(data);
       setPrevVideoList(data.topics);
     });
+  }
+  useEffect(() => {
+    fetchCourse();
   }, []);
   const {
     register,
@@ -90,6 +94,15 @@ const EditCourseForm = () => {
     setVideos(updatedVideos);
     setValue("videos", updatedVideos, { shouldValidate: true });
   };
+  const handelUpdate = (video) => {
+    // console.log(video);
+    updateTopic(video._id, video.topicName).then((data) => {
+      if (data) {
+        fetchCourse();
+      }
+    })
+
+  }
   const handleRemove = (index, id) => {
     if (id) {
       // alert(id);
@@ -231,7 +244,7 @@ const EditCourseForm = () => {
                         controls
                       >
                         <source
-                          src={video.preview || video.file}
+                          src={video.file}
                           type={video.file.type}
                         />
                         Your browser does not support the video tag.
@@ -251,9 +264,12 @@ const EditCourseForm = () => {
                           Video Name :
                           <input
                             type="text"
-                            value={video.name || video.topicName}
-                            onChange={(e) =>
-                              handleNameChange(index, e.target.value)
+                            value={video.topicName}
+                            onChange={(e) => {
+                              const updatedVideos = [...prevVideoList];
+                              updatedVideos[index].topicName = e.target.value;
+                              setPrevVideoList(updatedVideos);
+                            }
                             }
                             className=" p-2  h-[30px] bg-dark-2 text-white rounded w-fit mr-7 ml-4"
                           />
@@ -263,7 +279,7 @@ const EditCourseForm = () => {
                         <button
                           type="button"
                           //update function goes here
-                          onClick={() => {}}
+                          onClick={() => { handelUpdate(video) }}
                           className="ml-[10px] bg-yellow-700 text-white border-none py-[5px] px-[10px] cursor-pointer rounded"
                         >
                           Update

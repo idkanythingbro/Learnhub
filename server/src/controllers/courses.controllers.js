@@ -26,13 +26,13 @@ const deleteFiles = (files) => {
 const updateTopicNo = async (courseId) => {
     // Fetch all topics for the course sorted by creation order (_id default)
     const topics = await Topic.find({ course: courseId }).sort({ topicNo: 1 });
-// console.log(topics);
+    // console.log(topics);
 
     // Reassign indices based on their natural order
     await Promise.all(
         topics.map((topic, index) => {
             // console.log();
-            topic.topicNo = index+1; // Recalculate index
+            topic.topicNo = index + 1; // Recalculate index
             return topic.save(); // Save the updated topic
         })
     );
@@ -226,6 +226,7 @@ const updateCourse = asyncHandler(async (req, res) => {
         "Course updated successfully"
     ));
 })
+
 //FIXME - 
 const deleteCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
@@ -295,6 +296,36 @@ const addNewTopic = asyncHandler(async (req, res) => {
     ))
 })
 
+const updateTopic = asyncHandler(async (req, res) => {
+    const { topicId } = req.params;
+    const userId = req.user._id;
+    const topic = await Topic.findOne({ _id: topicId });
+    if (!topic) {
+        res.status(404);
+        throw new ApiError(404, "Topic not found");
+    }
+    const course = await Course.findOne({ _id: topic.course, owner: userId });
+    if (!course) {
+        res.status(400);
+        throw new ApiError("Unauthorize")
+    }
+    const { topicName } = req.body;
+    console.log(req.body);
+
+    if (!topicName) {
+        res.status(400);
+        throw new ApiError(400, "Topic name is required");
+    }
+    topic.topicName = topicName;
+    await topic.save();
+    res.status(200).json(new ApiResponse(
+        200,
+        { topic },
+        "Topic Successfully updated"
+    ));
+
+})
+
 const deleteTopic = asyncHandler(async (req, res) => {
     const { topicId } = req.params;
     const userId = req.user._id;
@@ -320,6 +351,7 @@ const deleteTopic = asyncHandler(async (req, res) => {
         "Topic Successfully deleted"
     ))
 })
+
 
 const getAllCourses = asyncHandler(async (req, res) => {
     const courses = await Course.find({}).populate({
@@ -459,12 +491,12 @@ const markTopicAsCompleted = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Course not enrolled");
     }
     // console.log( courseDetails.completedTopic);
-    
+
     const topic = courseDetails.completedTopic.find(topic => topic.toString() === topicId.toString());
     if (topic) {
         throw new ApiError(400, "Topic already completed");
     }
-    courseDetails.completedTopic.push( topicId );
+    courseDetails.completedTopic.push(topicId);
     await userDetails.save();
     res.status(200).json(new ApiResponse(200, {}, "Topic successfully completed"));
 
@@ -474,6 +506,7 @@ module.exports = {
     createNewCourse,
     addNewTopic,
     deleteCourse,
+    updateTopic,
     deleteTopic,
     getAllCourses,
     getCourseById,

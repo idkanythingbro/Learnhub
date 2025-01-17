@@ -141,7 +141,7 @@ const CoursePlayer = () => {
                 return (
                   <li
                     key={index}
-                    className="flex gap-10  items-center justify-between px-5 py-1 bg-dark-3 rounded-lg w-full"
+                    className={`flex gap-10  items-center justify-between px-5 py-1 bg-dark-3 rounded-lg w-full ${isCurrentVideo ? "border-2 border-orange-500" : ""}`}
                     onClick={() => handleVideoSelect(index)}
                   >
                     <video
