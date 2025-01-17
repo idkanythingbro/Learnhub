@@ -117,32 +117,38 @@ export const getProfile = (id) => async (dispatch) => {
   }
 };
 
-export const updateProfile = (key, value) => async (dispatch) => {
+export const updateProfile = (userId, userDetails) => async (dispatch) => {
   const toastId = toast.loading("Updating...");
   try {
     const formData = new FormData();
-    formData.append(key, value);
+    formData.append("name", userDetails.name);
+    formData.append("organization", userDetails.organization);
+    formData.append("phone", userDetails.phone);
+    formData.append("email", userDetails.email);
+    formData.append("description", userDetails.description);
+    formData.append("location", userDetails.location);
+    formData.append("designation", userDetails.designation);
+    formData.append("avatar", userDetails.avatar[0]);
 
-    const response = await axios.put(
-      `${userApiRout}/update-profile/`,
-      formData,
-      {
-        withCredentials: true,
-      }
+
+    const response = await axios.put(`${userApiRout}/update-profile/`, formData, {
+      withCredentials: true,
+    }
     );
+
     if (response.data.success) {
       toast.dismiss(toastId);
-      toast.success(`${key} updated successfully`);
-      dispatch(getLoginUserDetails());
+      toast.success(`Updated successfully`);
+      dispatch(getProfile(userId));
       return response.data.data;
     }
-    return null;
+    return false;
   } catch (error) {
     console.log(error);
 
     toast.dismiss(toastId);
     errorToast(error);
-    return null;
+    return false;
   }
 };
 

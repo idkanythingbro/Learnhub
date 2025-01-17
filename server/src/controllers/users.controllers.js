@@ -345,17 +345,6 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
     throw new ApiError(400, "Invalid request");
   }
-  //NOTE - Check if designation is valid
-  if (designation) {
-    designation = designation.toLowerCase();
-    const designationList = ["student", "teacher"];
-    if (!designationList.includes(designation)) {
-      if (localFilePath) {
-        fs.unlinkSync(localFilePath);
-        throw new ApiError(400, "Invalid designation");
-      }
-    }
-  }
 
   //NOTE - Check if file is valid
   let localFilePath = null;
@@ -371,6 +360,19 @@ const updateProfile = asyncHandler(async (req, res) => {
       );
     }
   }
+  //NOTE - Check if designation is valid
+  if (designation) {
+    // designation = designation.toLowerCase();
+    const designationList = ["student", "teacher"];
+    if (!designationList.includes(designation.toLowerCase())) {
+      if (localFilePath) {
+        fs.unlinkSync(localFilePath);
+      }
+      throw new ApiError(400, "Invalid designation");
+    }
+  }
+
+
 
   //NOTE - get user details
   let user = null;
@@ -398,12 +400,10 @@ const updateProfile = asyncHandler(async (req, res) => {
 
   //NOTE - Update user profile
   if (localFilePath) {
+    console.log("Uploading file to cloudinary");
+
     const oldAvatar = user.avatar;
-    user.avatar = await uploadFileToCloudinary(
-      localFilePath,
-      "auto",
-      "Profile photo"
-    );
+    user.avatar = await uploadFileToCloudinary(localFilePath, "auto", "Profile photo");
     if (oldAvatar) {
       await deleteFromCloudinary(oldAvatar);
     }

@@ -1,28 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile } from "../../service/user.service";
+import { getProfile, updateProfile } from "../../service/user.service";
 
 const Settings = () => {
+  const dispatch = useDispatch();
+  const formRef = useRef(null);
   const [photo, setPhoto] = useState("");
   const [profile, setProfile] = useState({});
-
-  const dispatch = useDispatch();
-
   const loggedInUserData = useSelector((state) => state.userReducer.user);
 
-  useEffect(() => {
-    if (loggedInUserData) {
-      dispatch(getProfile(loggedInUserData._id));
-    }
-  }, [loggedInUserData]);
-
-  const profileData = useSelector((state) => state.userReducer.profile);
-  useEffect(() => {
-    console.log(profileData);
-
-    setProfile(profileData);
-  }, [profileData]);
   const {
     register,
     handleSubmit,
@@ -36,9 +23,28 @@ const Settings = () => {
     },
   });
 
+  useEffect(() => {
+    if (loggedInUserData) {
+      dispatch(getProfile(loggedInUserData._id));
+    }
+  }, [loggedInUserData]);
+
+  const profileData = useSelector((state) => state.userReducer.profile);
+  useEffect(() => {
+    // console.log(profileData);
+    setProfile(profileData);
+    //Reset the register
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+
+  }, [profileData]);
+
+
   //here is onSubmit function
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
+    // console.log(data);
+    dispatch(updateProfile(loggedInUserData._id, data));
   });
 
   const handleChange = (event) => {
@@ -59,6 +65,7 @@ const Settings = () => {
         <h2 className="h2-bold">Edit Profile</h2>
       </div>
       <form
+        ref={formRef}
         onSubmit={onSubmit}
         className="flex flex-col md:flex-row flex-1 gap-5 mt-4 "
       >
@@ -72,7 +79,7 @@ const Settings = () => {
             Upload Photo
           </label>
           <input
-            {...register("profilephoto")}
+            {...register("avatar")}
             type="file"
             accept="image/*"
             onChange={handleChange}
@@ -81,11 +88,11 @@ const Settings = () => {
         </div>
         <div className="flex flex-col gap-3 flex-center w-full lg:w-[700px]">
           <div className="w-full">
-            <label htmlFor="firstname">First Name</label>
+            <label htmlFor="firstname"> Name</label>
             <input
-              {...register("firstname")}
+              {...register("name")}
               type="text"
-              placeholder={profile.name}
+              placeholder={profile?.name}
               className="p-2 bg-gray-700  rounded-md w-full"
             />
           </div>
@@ -153,6 +160,7 @@ const Settings = () => {
               {...register("description")}
               className="p-2 bg-gray-700 text-white rounded-md w-full"
               rows={7}
+              placeholder={profile?.description}
             />
           </div>
 
