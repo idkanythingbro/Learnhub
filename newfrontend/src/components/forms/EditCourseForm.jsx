@@ -1,5 +1,9 @@
 import { useForm } from "react-hook-form";
-import { deleteTopic, getCourseById, updateCourse } from "../../service/courses.service";
+import {
+  deleteTopic,
+  getCourseById,
+  updateCourse,
+} from "../../service/courses.service";
 import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -7,6 +11,8 @@ const EditCourseForm = () => {
   const [inputValue, setInputValue] = useState("");
   const [inputVdValue, setInputVdValue] = useState("");
   const [videos, setVideos] = useState([]);
+
+  const [prevVideoList, setPrevVideoList] = useState([]);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -16,7 +22,7 @@ const EditCourseForm = () => {
     getCourseById(courseId).then((data) => {
       console.log(data);
       setCourse(data);
-      setVideos(data.topics);
+      setPrevVideoList(data.topics);
     });
   }, []);
   const {
@@ -92,13 +98,11 @@ const EditCourseForm = () => {
         const updatedVideos = videos.filter((video) => video._id !== id);
         setVideos(updatedVideos);
       });
-    }
-    else {
+    } else {
       const updatedVideos = videos.filter((_, idx) => idx !== index);
       setVideos(updatedVideos);
       setValue("videos", updatedVideos, { shouldValidate: true });
     }
-
   };
 
   const onSubmit = handleSubmit((data) => {
@@ -207,6 +211,81 @@ const EditCourseForm = () => {
       </div>
 
       <div className="flex flex-col gap-2 w-full">
+        <h3>Previously Uploaded Videos</h3>
+        <div className="w-full">
+          {prevVideoList.length === 0 && (
+            <div className="bg-dark-3 p-3 rounded">
+              <div className="flex gap-10 items-center bg-dark-3 m-4">
+                No previously uploaded Videos
+              </div>
+            </div>
+          )}
+          {prevVideoList.length > 0 && (
+            <div className="w-full">
+              <ul className="bg-dark-3 p-3 rounded w-full ">
+                {prevVideoList.map((video, index) => (
+                  <li key={index} className="w-full">
+                    <div className="flex flex-col md:flex-row gap-5 items-center bg-dark-3 m-4">
+                      <video
+                        className="h-64 xs:h-[400px] lg:h-[250px] w-full rounded-[24px] object-contain mb-5"
+                        controls
+                      >
+                        <source
+                          src={video.preview || video.file}
+                          type={video.file.type}
+                        />
+                        Your browser does not support the video tag.
+                      </video>
+                      <div className="w-full flex flex-col gap-2">
+                        <label className="text-blue-300 flex w-full">
+                          {" "}
+                          Video Number :
+                          <input
+                            type="text"
+                            value={index + 1}
+                            disabled
+                            className=" p-2  h-[30px] bg-dark-2 ml-4 text-white rounded w-fit  mr-7"
+                          />
+                        </label>
+                        <label className="text-blue-300">
+                          Video Name :
+                          <input
+                            type="text"
+                            value={video.name || video.topicName}
+                            onChange={(e) =>
+                              handleNameChange(index, e.target.value)
+                            }
+                            className=" p-2  h-[30px] bg-dark-2 text-white rounded w-fit mr-7 ml-4"
+                          />
+                        </label>
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <button
+                          type="button"
+                          //update function goes here
+                          onClick={() => {}}
+                          className="ml-[10px] bg-yellow-700 text-white border-none py-[5px] px-[10px] cursor-pointer rounded"
+                        >
+                          Update
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemove(index, video._id)}
+                          className="ml-[10px] bg-[#ff4d4f] text-white border-none py-[5px] px-[10px] cursor-pointer rounded"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 w-full">
         <h3>Uploaded Videos</h3>
         <div>
           {videos.length === 0 && (
@@ -232,7 +311,7 @@ const EditCourseForm = () => {
                         />
                         Your browser does not support the video tag.
                       </video>
-                      <div className="w-full ">
+                      <div className="w-full flex flex-col gap-2">
                         <label className="text-blue-300 flex w-full">
                           {" "}
                           Video Number:

@@ -5,18 +5,12 @@ import {
 } from "../../service/courses.service";
 import { useDispatch, useSelector } from "react-redux";
 import EditCourseCard from "../../components/shared/EditCourseCard";
-import CourseCard from "../../components/shared/CourseCard";
-import Loader from "../../components/shared/Loader";
 
 const Dashboard = () => {
   const [createdCourses, setCreatedCourses] = useState(null);
-  const [enrolledCourses, setEnrolledCourses] = useState(null);
   const dispatch = useDispatch();
   const createdCoursesData = useSelector(
     (state) => state.courseReducer.createdCourses
-  );
-  const enrolledCoursesData = useSelector(
-    (state) => state.courseReducer.enrolledCourses
   );
   useEffect(() => {
     dispatch(getCreatedCourses());
@@ -25,10 +19,7 @@ const Dashboard = () => {
   useEffect(() => {
     setCreatedCourses(createdCoursesData);
   }, [createdCoursesData]);
-  useEffect(() => {
-    setEnrolledCourses(enrolledCoursesData);
-  }, [enrolledCoursesData]);
-  // console.log(createdCourses);
+
   return (
     <div className="bg-black text-white flex flex-1">
       <div className="common-container">
