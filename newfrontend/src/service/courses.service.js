@@ -169,11 +169,12 @@ export const updateCourse = async (courseId, courseData) => {
 
         toast.dismiss(tostId);
         toast.success("Course updated successfully");
+        return response.data.success;
         // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
         console.log(error);
-
+        return false;
     }
 }
 

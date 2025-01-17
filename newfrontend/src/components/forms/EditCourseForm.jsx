@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import {
   deleteTopic,
   getCourseById,
@@ -107,9 +107,9 @@ const EditCourseForm = () => {
     if (id) {
       // alert(id);
       deleteTopic(id).then((data) => {
-        // console.log(data);
-        const updatedVideos = videos.filter((video) => video._id !== id);
-        setVideos(updatedVideos);
+        if (data) {
+          fetchCourse();
+        }
       });
     } else {
       const updatedVideos = videos.filter((_, idx) => idx !== index);
@@ -119,7 +119,12 @@ const EditCourseForm = () => {
   };
 
   const onSubmit = handleSubmit((data) => {
-    updateCourse(courseId, data);
+    updateCourse(courseId, data).then((res) => {
+      if (res) {
+        fetchCourse();
+        setVideos([]);
+      }
+    })
   });
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-9 w-full max-w-5xl">
