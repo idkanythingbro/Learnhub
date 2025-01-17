@@ -6,7 +6,6 @@ import {
 import Loader from "./../../components/shared/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile } from "../../service/user.service";
-import { FaCirclePlay } from "react-icons/fa6";
 
 const CoursePlayer = () => {
   const dispatch = useDispatch();

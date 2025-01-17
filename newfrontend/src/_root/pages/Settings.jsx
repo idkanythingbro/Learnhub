@@ -37,9 +37,7 @@ const Settings = () => {
     if (formRef.current) {
       formRef.current.reset();
     }
-
   }, [profileData]);
-
 
   //here is onSubmit function
   const onSubmit = handleSubmit((data) => {
@@ -134,12 +132,15 @@ const Settings = () => {
             <label htmlFor="email" className="text-white">
               Designation
             </label>
-            <input
+            <select
               {...register("designation")}
               type="text"
               placeholder={profile?.designation}
               className="p-2 bg-gray-700 text-white rounded-md w-full"
-            />
+            >
+              <option value="Learner">Learner</option>
+              <option value="Educator">Educator</option>
+            </select>
           </div>
           <div className="w-full">
             <label htmlFor="email" className="text-white">
