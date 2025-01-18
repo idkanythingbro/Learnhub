@@ -5,6 +5,7 @@ import { useClickOutside } from "../../utils/useClickOutside";
 import { getPosts } from "../../service/post.service";
 import PopupModel from "../../popup/PopupModel";
 import Post from "../../components/socialSiteComponents/Post";
+import { toast } from "react-toastify";
 const Social = () => {
   const dispatch = useDispatch();
   const createPostRef = useRef(null);
@@ -18,13 +19,16 @@ const Social = () => {
   }, [loggedInUserData]);
 
   useEffect(() => {
-    console.log("Pst data",postsData);
-    
+    console.log("Pst data", postsData);
+
     setPosts(postsData);
   }, [postsData])
 
   useEffect(() => {
     dispatch(getPosts());
+    toast.warning("This section is under development", {
+      autoClose: 1000*30
+    });
   }, [])
   return (
     <div className="w-full flex flex-col  items-center p-2 pt-8 gap-4 ">
@@ -57,8 +61,8 @@ const Social = () => {
 
       <div className=" flex flex-col gap-4 mt-10 ">
         {
-        posts &&  posts.map((post,index) => {
-          return  <Post key={index} post={post} />
+          posts && posts.map((post, index) => {
+            return <Post key={index} post={post} />
           })
         }
       </div>
