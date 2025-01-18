@@ -42,8 +42,8 @@ const userDetailsSchema = new mongoose.Schema({
     },
     designation: {
         type: String,
-        enum: ["student", "teacher"],
-        default: "student"
+        enum: ["learner", "educator"],
+        default: "learner"
     },
     enrolledCourses: {
         type: [{

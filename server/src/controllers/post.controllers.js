@@ -100,6 +100,11 @@ const handelDeletePost = async (postId = null) => {
 //SECTION - Controllers
 
 const createPost = asyncHandler(async (req, res) => {
+    // console.log("Create Post");
+    // console.log(req.body);
+    // console.log(req.files);
+    
+    
     const { caption } = req.body;
     const files = req.files;
 
@@ -110,13 +115,13 @@ const createPost = asyncHandler(async (req, res) => {
         }
         throw new ApiError(401, "Unauthorized")
     }
-    const user = await User.findById(userId);
-    if (!user) {
-        if (files) {
-            deleteFiles(files);
-        }
-        throw new ApiError(404, "User not found")
-    }
+    // const user = await User.findById(userId);
+    // if (!user) {
+    //     if (files) {
+    //         deleteFiles(files);
+    //     }
+    //     throw new ApiError(404, "User not found")
+    // }
 
     if (!caption && (files && files.length === 0)) {
         if (files) {
@@ -124,15 +129,18 @@ const createPost = asyncHandler(async (req, res) => {
         }
         throw new ApiError(400, "Caption or images required")
     }
+    // console.log("ch->>>>>>>>>1");
+    
     if (files.length > 5) {
         deleteFiles(files);
         throw new ApiError(400, "Maximum 5 images allowed")
     }
-
+    // console.log("ch->>>>>>>>>2");
     let images = [];
     if (files) {
         images = await handelUploadImages(files);
     }
+    // console.log("ch->>>>>>>>>3");
 
     const post = await Post.create(
         {
@@ -141,6 +149,7 @@ const createPost = asyncHandler(async (req, res) => {
             images
         }
     )
+    // console.log("ch->>>>>>>>>4");
 
     res.status(201).json(
         new ApiResponse(

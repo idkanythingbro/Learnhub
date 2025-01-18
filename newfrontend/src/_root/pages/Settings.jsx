@@ -135,11 +135,12 @@ const Settings = () => {
             <select
               {...register("designation")}
               type="text"
-              placeholder={profile?.designation}
+              name="designation"
+              defaultValue={profile?.designation}
               className="p-2 bg-gray-700 text-white rounded-md w-full"
             >
-              <option value="Learner">Learner</option>
-              <option value="Educator">Educator</option>
+              <option value="learner" >Learner</option>
+              <option value="educator" >Educator</option>
             </select>
           </div>
           <div className="w-full">

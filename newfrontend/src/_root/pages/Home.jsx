@@ -36,7 +36,7 @@ const Home = () => {
         />
         <div className="flex-center flex-col">
           <h2 className="h3-bold">{profile?.name}</h2>
-          <p className="small-regular">{profile?.designation}</p>
+          <p className="small-regular capitalize">{profile?.designation}</p>
         </div>
         <div className="flex flex-row justify-between w-[200px]">
           <div className="flex-center flex-col">

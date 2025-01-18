@@ -362,8 +362,10 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
   //NOTE - Check if designation is valid
   if (designation) {
+    console.log(designation);
+
     // designation = designation.toLowerCase();
-    const designationList = ["student", "teacher"];
+    const designationList = ["learner", "educator"];
     if (!designationList.includes(designation.toLowerCase())) {
       if (localFilePath) {
         fs.unlinkSync(localFilePath);
@@ -400,7 +402,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
   //NOTE - Update user profile
   if (localFilePath) {
-    console.log("Uploading file to cloudinary");
+    // console.log("Uploading file to cloudinary");
 
     const oldAvatar = user.avatar;
     user.avatar = await uploadFileToCloudinary(localFilePath, "auto", "Profile photo");
@@ -415,7 +417,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   if (description) userDetails.description = description;
   if (organization) userDetails.organization = organization;
   if (location) userDetails.location = location;
-  if (designation) userDetails.designation = designation;
+  if (designation) userDetails.designation = designation.toLowerCase();
   await user.save({ validateModifiedOnly: true });
   await userDetails.save({ validateModifiedOnly: true });
   const userProfile = {
