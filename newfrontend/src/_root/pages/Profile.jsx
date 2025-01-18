@@ -21,7 +21,7 @@ const Profile = () => {
   }, [loggedInUserData]);
 
   useEffect(() => {
-    console.log(profileData);
+    // console.log(profileData);
 
     setProfile(profileData);
   }, [profileData]);

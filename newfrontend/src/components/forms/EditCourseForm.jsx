@@ -21,7 +21,7 @@ const EditCourseForm = () => {
   const [course, setCourse] = useState(undefined);
   const fetchCourse = () => {
     getCourseById(courseId).then((data) => {
-      console.log(data);
+      // console.log(data);
       setCourse(data);
       setPrevVideoList(data.topics);
     });

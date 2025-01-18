@@ -362,7 +362,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
   //NOTE - Check if designation is valid
   if (designation) {
-    console.log(designation);
+    // console.log(designation);
 
     // designation = designation.toLowerCase();
     const designationList = ["learner", "educator"];

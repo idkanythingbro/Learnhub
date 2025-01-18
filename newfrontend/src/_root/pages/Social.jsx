@@ -19,7 +19,7 @@ const Social = () => {
   }, [loggedInUserData]);
 
   useEffect(() => {
-    console.log("Pst data", postsData);
+    // console.log("Pst data", postsData);
 
     setPosts(postsData);
   }, [postsData])

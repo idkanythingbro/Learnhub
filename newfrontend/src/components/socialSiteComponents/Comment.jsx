@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { useClickOutside } from "../../utils/useClickOutside";
 import CommentSections from "./CommentSections";
 const Comment = ({ _id, comment, owner, replies, likes, handelDelete }) => {
-  console.log("Comment Component", _id, comment, owner, replies, likes);
 
   const menuDivRef = useRef(null);
   const loggedInUserData = useSelector(state => state.userReducer.user);

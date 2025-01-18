@@ -141,7 +141,6 @@ const CoursePlayer = () => {
             </div>
             <h2>Topics</h2>
             <ul className="flex flex-col gap-5 flex-center w-full">
-              {/* {console.log(videoList)} */}
               {videoList.map((topic, index) => {
                 const isCurrentVideo = topic._id === currentVideo; // Check if it's the current video
                 const isCompleted = checkCompleted(topic._id); // Check if the video is completed

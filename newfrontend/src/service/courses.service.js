@@ -6,7 +6,6 @@ const baseUrl = import.meta.env.VITE_SERVER_BASE_URL
 export const createNewCourse = async (courseData) => {
     const tostId = toast.loading("Creating ...");
     try {
-        // console.log(courseData);
 
         const formData = new FormData();
         formData.append('courseName', courseData.courseName);
@@ -15,7 +14,6 @@ export const createNewCourse = async (courseData) => {
         formData.append('poster', courseData.poster[0]); // File object
         formData.append('prerequsite', courseData.prerequsite);
 
-        // console.log("F", formData);
 
         const response = await axios.post(`${baseUrl}/courses/create`, formData, {
             withCredentials: true
@@ -23,10 +21,8 @@ export const createNewCourse = async (courseData) => {
 
         toast.dismiss(tostId);
         toast.success("Course created successfully");
-        // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
-        console.log(error);
 
     }
 
@@ -43,12 +39,12 @@ export const getAllCourses = () => async (dispatch) => {
         dispatch(setCourseSuccess(true));
 
 
-        // console.log(response.data.data);
 
         return response.data;
 
     } catch (error) {
-        console.log(error);
+        errorToast(error);
+        // console.log(error);
     }
 };
 
@@ -58,7 +54,6 @@ export const getCourseById = async (courseId) => {
             withCredentials: true
         });
 
-        // console.log(response.data.data);
         return response.data.data;
 
     } catch (error) {
@@ -75,8 +70,6 @@ export const enrollCourse = (courseId) => async (dispatch) => {
         });
 
         if (response.data.success) {
-            //    dispatch();
-            // console.log(response.data.data.course);
             dispatch(addNewEnrolledCourse(response.data.data.course));
 
         }
@@ -95,8 +88,6 @@ export const unenrollCourse = (courseId) => async (dispatch) => {
         });
 
         if (response.data.success) {
-            //    dispatch();
-            // console.log(response.data.data.course);
             dispatch(removeACourseFromEnrolled(response.data.data.course));
 
         }
@@ -113,12 +104,12 @@ export const getCreatedCourses = () => async (dispatch) => {
         const response = await axios.get(`${baseUrl}/courses/created`, {
             withCredentials: true
         });
-        // console.log("Created",response.data.data);
         dispatch(setCreatedCourses(response.data.data));
         return response.data.data;
 
     } catch (error) {
-        console.log(error);
+        errorToast(error);
+        // console.log(error);
     }
 }
 
@@ -128,13 +119,12 @@ export const getEnrolledCourses = () => async (dispatch) => {
             withCredentials: true
         });
 
-        // console.log("Enrolled", response.data.data);
         dispatch(setEnrolledCourses(response.data.data));
         return response.data.success;
 
     } catch (error) {
         errorToast(error);
-        console.log(error);
+        // console.log(error);
         return false
     }
 }
@@ -142,7 +132,6 @@ export const getEnrolledCourses = () => async (dispatch) => {
 export const updateCourse = async (courseId, courseData) => {
     const tostId = toast.loading("Updating ...");
     try {
-        console.log(courseData);
 
         const formData = new FormData();
         formData.append('courseName', courseData.courseName);
@@ -150,7 +139,6 @@ export const updateCourse = async (courseId, courseData) => {
         formData.append('introVideo', courseData.introVideo[0]); // File object
         formData.append('poster', courseData.poster[0]); // File object
         formData.append('prerequsite', courseData.prerequsite);
-        // console.log(courseData.videos);
 
         // Topic
         courseData.videos?.forEach((topic, index) => {
@@ -158,10 +146,9 @@ export const updateCourse = async (courseId, courseData) => {
                 formData.append('topics', topic.name);
                 formData.append(`${topic.name}`, topic.file);
             }
-            
+
         });
 
-        console.log("F", formData);
 
         const response = await axios.put(`${baseUrl}/courses/update/${courseId}`, formData, {
             withCredentials: true
@@ -173,7 +160,7 @@ export const updateCourse = async (courseId, courseData) => {
         // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
-        console.log(error);
+        // console.log(error);
         return false;
     }
 }
@@ -181,19 +168,17 @@ export const updateCourse = async (courseId, courseData) => {
 export const updateTopic = async (topicId, topicName) => {
     const tostId = toast.loading("Updating ...");
     try {
-        // console.log(topicData);
 
-        const response = await axios.put(`${baseUrl}/courses/topic/${topicId}`, {topicName}, {
+        const response = await axios.put(`${baseUrl}/courses/topic/${topicId}`, { topicName }, {
             withCredentials: true
         })
 
         toast.dismiss(tostId);
         toast.success("Topic updated successfully");
         return response.data.success;
-        // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
-        console.log(error);
+        // console.log(error);
         return false;
     }
 }
@@ -208,29 +193,27 @@ export const deleteTopic = async (topicId) => {
         toast.dismiss(tostId);
         toast.success("Course deleted successfully");
         return response.data.success;
-        // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
-        console.log(error);
+        // console.log(error);
         return false;
 
     }
 }
 
-export const markTopicAsCompleted = async (courseId,topicId) => {
+export const markTopicAsCompleted = async (courseId, topicId) => {
     const tostId = toast.loading("Completing ...");
     try {
-        const response = await axios.patch(`${baseUrl}/courses/topic/complete/`, { courseId,topicId }, {
+        const response = await axios.patch(`${baseUrl}/courses/topic/complete/`, { courseId, topicId }, {
             withCredentials: true
         });
 
         toast.dismiss(tostId);
         toast.success("Topic completed successfully");
         return response.data.success;
-        // console.log("D", response.data);
     } catch (error) {
         toast.dismiss(tostId);
-        console.log(error);
+        // console.log(error);
         return false;
 
     }

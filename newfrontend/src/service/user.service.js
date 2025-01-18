@@ -17,7 +17,7 @@ export const registerUser = (userData, navigate) => async (_) => {
     }
     return true;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     toast.dismiss(toastId);
     errorToast(error);
     return false;
@@ -60,12 +60,10 @@ export const logoutUser = () => async (dispatch) => {
 let refreshCnt = 0;
 export const getLoginUserDetails = () => async (dispatch) => {
   try {
-    console.log("getLoginUserDetails", userApiRout);
 
     const response = await axios.get(`${userApiRout}/me`, {
       withCredentials: true,
     });
-    // console.log("user", response);
     if (response.data.success) {
 
       dispatch(setLoginUser(response.data.data));
@@ -144,7 +142,7 @@ export const updateProfile = (userId, userDetails) => async (dispatch) => {
     }
     return false;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
     toast.dismiss(toastId);
     errorToast(error);
@@ -153,7 +151,6 @@ export const updateProfile = (userId, userDetails) => async (dispatch) => {
 };
 
 export const requestToResetPassword = async (email) => {
-  console.log("requestToResetPassword", email);
 
   const toastId = toast.loading("Sending email...");
   try {

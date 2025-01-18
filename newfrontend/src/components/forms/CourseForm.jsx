@@ -20,7 +20,7 @@ const CourseForm = () => {
   });
   // here is the data of the form
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
+    // console.log(data);
     createNewCourse(data);
   });
 

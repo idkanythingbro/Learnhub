@@ -11,7 +11,6 @@ import { deletePost, gateComment } from '../../service/post.service';
 import CommentSections from './CommentSections';
 import Feedback from './Feedback';
 const Post = ({ post }) => {
-    console.log("Post",post);
     
     const navigate = useNavigate()
     const menuDivRef = useRef(null);

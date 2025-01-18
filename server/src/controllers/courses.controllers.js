@@ -41,7 +41,7 @@ const updateTopicNo = async (courseId) => {
 };
 
 const createNewTopics = async (courseId, topics, files) => {
-    console.log("Topics", topics);
+    // console.log("Topics", topics);
     // return;
     if (topics && Array.isArray(topics) == false) {
         topics = [topics];
@@ -168,7 +168,7 @@ const createNewCourse = asyncHandler(async (req, res) => {
 })
 //TODO - 
 const updateCourse = asyncHandler(async (req, res) => {
-    console.log("update course");
+    // console.log("update course");
     const { courseName, description, prerequsite, topics } = req.body;
     const courseId = req.params.courseId;
     const userId = req.user._id;
@@ -310,7 +310,6 @@ const updateTopic = asyncHandler(async (req, res) => {
         throw new ApiError("Unauthorize")
     }
     const { topicName } = req.body;
-    console.log(req.body);
 
     if (!topicName) {
         res.status(400);

@@ -28,7 +28,6 @@ const Routing = () => {
   const [user, setUser] = useState(null);
   const loggedInUserData = useSelector((state) => state.userReducer.user);
   useEffect(() => {
-    // console.log(loggedInUserData);
     setUser(loggedInUserData);
   }, [loggedInUserData]);
   if (!user) {

@@ -22,9 +22,6 @@ const SocialPostEditor = ({
     //Close Emoji Dialog if Click Outside the dialog
     useClickOutside(emojiDiv, setIsEmojiPick)
     const handelSubmit = () => {
-        // calBack(text, files);
-        // alert("This is a test alert")
-        // console.log(text, files);
         createNewPost(text, files).then((res) => {
             if (res) {
                 setText("");

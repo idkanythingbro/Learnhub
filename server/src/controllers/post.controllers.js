@@ -68,7 +68,7 @@ const handelCommentDelete = async (commentId = null) => {
         await Comment.deleteOne({ _id: commentId });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         new ApiError(500)
 
     }
@@ -91,7 +91,7 @@ const handelDeletePost = async (postId = null) => {
         }
         await Post.deleteOne({ _id: postId });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         new ApiError(500)
     }
 }
