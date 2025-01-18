@@ -123,15 +123,15 @@ export const gateComment = async (postId) => {
 
 export const commentOnPost = (postId, comment) => async (dispatch) => {
     try {
-        alert("commentOnPost")
-        // const response = await axios.post(`${postUrl}/comment/${postId}`, { comment }, {
-        //     withCredentials: true
-        // })
+        // alert("commentOnPost")
+        const response = await axios.post(`${postUrl}/comment/${postId}`, { comment }, {
+            withCredentials: true
+        })
 
-        // if (response.data.success) {
-        //     dispatch(updatePostFeedback(response.data.data));
-        //     dispatch(singlePostUpdate(response.data.data));
-        // }
+        if (response.data.success) {
+            dispatch(updatePostFeedback(response.data.data));
+            dispatch(singlePostUpdate(response.data.data));
+        }
 
 
     } catch (error) {
