@@ -1,3 +1,4 @@
+export const learnHubBasUrl = `${import.meta.env.VITE_SERVER_BASE_URL}`;
 export const userApiRout = `${import.meta.env.VITE_SERVER_BASE_URL}/users`;
 
 export const sidebarLinks = [

@@ -35,6 +35,8 @@ export const getPosts = (limit = 10) => async (dispatch) => {
             withCredentials: true
         })
         if (response.data.success) {
+            // console.log("Post",response.data.data);
+            
             dispatch(updatePost(response.data.data.post));
         }
         return [];
@@ -99,10 +101,13 @@ export const likePost = (postId) => async (dispatch) => {
 
 export const gateComment = async (postId) => {
     try {
+// alert("gateComment")
         const response = await axios.get(`${postUrl}/comment/${postId}`, {
             withCredentials: true
         })
         if (response.data.success) {
+            // console.log("Comment",response.data.data.comments);
+            
             return response.data.data.comments
         }
         return []
@@ -118,14 +123,15 @@ export const gateComment = async (postId) => {
 
 export const commentOnPost = (postId, comment) => async (dispatch) => {
     try {
-        const response = await axios.post(`${postUrl}/comment/${postId}`, { comment }, {
-            withCredentials: true
-        })
+        alert("commentOnPost")
+        // const response = await axios.post(`${postUrl}/comment/${postId}`, { comment }, {
+        //     withCredentials: true
+        // })
 
-        if (response.data.success) {
-            dispatch(updatePostFeedback(response.data.data));
-            dispatch(singlePostUpdate(response.data.data));
-        }
+        // if (response.data.success) {
+        //     dispatch(updatePostFeedback(response.data.data));
+        //     dispatch(singlePostUpdate(response.data.data));
+        // }
 
 
     } catch (error) {

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import EmojiPicker from 'emoji-picker-react';
-import { useClickOutside } from '../utils/useClickOutside';
+import { useClickOutside } from '../../utils/useClickOutside';
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { toast } from 'react-toastify';
-import { createNewPost } from '../service/post.service';
+import { createNewPost } from '../../service/post.service';
 const SocialPostEditor = ({
     width = "25rem",
     minWidth = "15rem",

@@ -100,10 +100,6 @@ const handelDeletePost = async (postId = null) => {
 //SECTION - Controllers
 
 const createPost = asyncHandler(async (req, res) => {
-    // console.log("Create Post");
-    // console.log(req.body);
-    // console.log(req.files);
-    
     
     const { caption } = req.body;
     const files = req.files;
@@ -115,13 +111,6 @@ const createPost = asyncHandler(async (req, res) => {
         }
         throw new ApiError(401, "Unauthorized")
     }
-    // const user = await User.findById(userId);
-    // if (!user) {
-    //     if (files) {
-    //         deleteFiles(files);
-    //     }
-    //     throw new ApiError(404, "User not found")
-    // }
 
     if (!caption && (files && files.length === 0)) {
         if (files) {
@@ -163,6 +152,7 @@ const createPost = asyncHandler(async (req, res) => {
 
 })
 
+//TODO -  - Update post
 const updatePost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     const files = req.files;
@@ -250,6 +240,7 @@ const likePost = asyncHandler(async (req, res) => {
     ))
 })
 
+//TODO - 
 const sharePost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     const userId = req.user._id;
@@ -260,9 +251,6 @@ const sharePost = asyncHandler(async (req, res) => {
     if (!userId) {
         throw new ApiError(401, "Unauthorized")
     }
-    // if (post.owner.toString() === userId.toString()) {
-    //     throw new ApiError(403, "Forbidden")
-    // }
     if (!post.share.includes(userId)) {
         // post.share=post.share.filter(id=>id.toString()!==userId.toString());
         post.share.push(userId);
