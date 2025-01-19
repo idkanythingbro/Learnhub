@@ -353,10 +353,28 @@ const deleteTopic = asyncHandler(async (req, res) => {
 
 
 const getAllCourses = asyncHandler(async (req, res) => {
-    const courses = await Course.find({}).populate({
+    let courses = await Course.find({}).populate({
         path: "owner",
         select: "name email"
     });
+
+    //Filter if topics count is 0 then remove that course
+    const coursesWithTopics = await Promise.all(
+        courses.map(async (course) => {
+            const topics = await Topic.find({ course: course._id });
+            // console.log("Topics", topics);
+            return { course, hasTopics: topics.length > 0 };
+        })
+    );
+    
+   courses= coursesWithTopics
+        .filter(({ hasTopics }) => hasTopics)
+        .map(({ course }) => course);
+    
+    // console.log(filteredCourses);
+    
+
+
     // console.log(courses);
 
     res.status(200).json(new ApiResponse(
@@ -501,6 +519,53 @@ const markTopicAsCompleted = asyncHandler(async (req, res) => {
 
 });
 
+const updateCompletedCourses = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+    // console.log(courseId);
+    
+    const userId = req.user._id;
+    const userDetails = await UserDetails.findOne({ ownerId: userId });
+    if (!userDetails) {
+        throw new ApiError(404, "User details not found");
+    }
+    const courseDetails = userDetails.enrolledCourses.find(courseDetails => courseDetails.course.toString() === courseId.toString());
+    if (!courseDetails) {
+        throw new ApiError(404, "Course not enrolled");
+    }
+    //Course is already completed
+    if (userDetails.completedCourses.find(course => course.toString() === courseId.toString())) {
+        throw new ApiError(400, "Course already completed");
+    }
+
+    // courseDetails.completedTopic
+    const topics = await Topic.find({ course: courseId })||[];
+    // console.log("Topics", topics);
+    // console.log("Completed Topics", courseDetails.completedTopic);
+    
+    
+    if (topics.length>0 && topics?.length !== courseDetails.completedTopic?.length) {
+        throw new ApiError(400, "All topics are not completed");
+    }
+    // console.log("All topics are completed");
+    
+    userDetails.completedCourses.push(courseId);
+    await userDetails.save();
+    
+    res.status(200).json(new ApiResponse(200, {}, "Course successfully completed"));
+})
+
+const likeCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+    const userId = req.user._id;
+   const course = await Course.findById(courseId);
+    if (!course) {
+        throw new ApiError(404, "Course not found");
+    }
+    course.likes.push(userId);
+    await course.save();
+    res.status(200).json(new ApiResponse(200, {}, "Course liked successfully"));
+})
+
 module.exports = {
     createNewCourse,
     addNewTopic,
@@ -514,5 +579,7 @@ module.exports = {
     unenrolledCourse,
     getEnrolledCourses,
     updateCourse,
-    markTopicAsCompleted
+    markTopicAsCompleted,
+    updateCompletedCourses,
+    likeCourse
 }

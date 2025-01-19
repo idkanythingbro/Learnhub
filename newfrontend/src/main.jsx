@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store.js";
 import "./index.css";
+import 'sweetalert2/src/sweetalert2.scss'
 import App from "./App.jsx";
 import { Bounce, ToastContainer } from "react-toastify";
 

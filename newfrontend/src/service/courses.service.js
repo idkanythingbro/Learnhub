@@ -218,3 +218,34 @@ export const markTopicAsCompleted = async (courseId, topicId) => {
 
     }
 }
+
+
+export const updateCompletedCourses = async (courseId) => {
+    try {
+        console.log("C", courseId);
+        
+        const response = await axios.patch(`${baseUrl}/courses/complete/${courseId}`, {}, {
+            withCredentials: true
+        });
+
+        return response.data.success;
+    } catch (error) {
+        console.log(error);
+        return false;
+
+    }
+}
+
+export const likeCourse = async (courseId) => {
+    try {
+        const response = await axios.patch(`${baseUrl}/courses/like/${courseId}`, {}, {
+            withCredentials: true
+        });
+
+        return response.data.success;
+    } catch (error) {
+        console.log(error);
+        return false;
+
+    }
+}

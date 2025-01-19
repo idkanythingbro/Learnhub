@@ -36,7 +36,7 @@ const Explore = () => {
           ) : (
             <ul className="text-white flex flex-col lg:grid lg:grid-cols-2 flex-1 gap-9 w-full">
               {courses &&
-                courses.map((course) => (
+                courses?.map((course) => (
                   <CourseCard key={course._id} course={course} />
                 ))}
             </ul>
