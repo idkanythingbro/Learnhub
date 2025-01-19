@@ -1,17 +1,19 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { enrollCourse, getCourseById, getEnrolledCourses, unenrollCourse } from "../../service/courses.service";
 import { useEffect, useState } from "react";
 import Loader from "./../../components/shared/Loader";
 import { timeAgo } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 const CourseProfile = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const searchParams = new URLSearchParams(location.search);
   const courseId = searchParams.get("courseId");
   const [course, setCourse] = useState(undefined);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const loggedInProfile = useSelector((state) => state.userReducer.profile);
   const enrollCourses = useSelector((state) => state.courseReducer.enrolledCourses);
   const handelCourseEnroll = () => {
     dispatch(enrollCourse(courseId));
@@ -25,7 +27,14 @@ const CourseProfile = () => {
     getCourseById(courseId).then((data) => {
       setCourse(data);
     });
+   
   }, []);
+  useEffect(() => {
+    if (loggedInProfile) {
+      const isContain = loggedInProfile.completedCourses.find((course) => course === courseId);
+      setIsCompleted(isContain ? true : false);
+    }
+  }, [loggedInProfile]);
 
   useEffect(() => {
 
@@ -35,6 +44,7 @@ const CourseProfile = () => {
     }
 
   }, [enrollCourses])
+
 
   return (
     <div className="bg-black text-white flex flex-1">
@@ -46,7 +56,16 @@ const CourseProfile = () => {
               // After gate response from server - if course is not found then show No Course Found
               course ? (
                 <div className="max-w-5xl flex-col w-full">
-                  <h1 className="h2-bold md:mb-10 mb-5">{course.courseName}</h1>
+                  <div className="flex gap-5 items-start ">
+                    <h1 className="h2-bold md:mb-10 mb-5">{course.courseName}</h1>
+                    {isCompleted && <p className="">
+
+                      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
+                        <path fill="#388e3c" d="M43,38.833C43,41.135,41.135,43,38.833,43H17.167C14.866,43,13,41.135,13,38.833V17.167 C13,14.865,14.866,13,17.167,13h21.667C41.135,13,43,14.865,43,17.167V38.833z"></path><path fill="#c8e6c9" d="M35,30.833C35,33.135,33.135,35,30.833,35H9.167C6.866,35,5,33.135,5,30.833V9.167 C5,6.865,6.866,5,9.167,5h21.667C33.135,5,35,6.865,35,9.167V30.833z"></path><path fill="#4caf50" d="M18 28.121L11.064 21.186 13.186 19.064 18 23.879 28.814 13.064 30.936 15.186z"></path>
+                      </svg>
+
+                    </p>}
+                  </div>
                   <video
                     className="w-full h-[400px] mb-5 md:mb-10"
                     src={course.introVideo}
