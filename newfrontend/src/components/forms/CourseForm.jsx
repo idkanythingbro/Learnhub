@@ -3,8 +3,9 @@ import FileUploader from "../shared/FileUploader";
 import VideoUploader from "../shared/VideoUploader";
 import { createNewCourse } from "../../service/courses.service";
 import { useRef } from "react";
-
+import { useNavigate } from "react-router-dom";
 const CourseForm = () => {
+  const navigate = useNavigate();
   const formRef=useRef(null);
   const {
     register,
@@ -26,7 +27,7 @@ const CourseForm = () => {
     createNewCourse(data).then((res) => {
       if (res && formRef.current) {
         formRef.current.reset();
-        
+        navigate("/dashboard");
         
       }
     })
