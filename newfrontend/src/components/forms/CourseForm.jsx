@@ -2,8 +2,10 @@ import { Controller, useForm } from "react-hook-form";
 import FileUploader from "../shared/FileUploader";
 import VideoUploader from "../shared/VideoUploader";
 import { createNewCourse } from "../../service/courses.service";
+import { useRef } from "react";
 
 const CourseForm = () => {
+  const formRef=useRef(null);
   const {
     register,
     handleSubmit,
@@ -21,11 +23,17 @@ const CourseForm = () => {
   // here is the data of the form
   const onSubmit = handleSubmit((data) => {
     // console.log(data);
-    createNewCourse(data);
+    createNewCourse(data).then((res) => {
+      if (res && formRef.current) {
+        formRef.current.reset();
+        
+        
+      }
+    })
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-9 w-full max-w-5xl">
+    <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-9 w-full max-w-5xl">
       <div className="flex flex-col gap-2 w-full">
         <label className="text-white">Course Name</label>
         <input

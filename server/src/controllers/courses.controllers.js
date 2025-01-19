@@ -244,7 +244,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
     }
     const topics = await Topic.find({ courseId: courseId });
     for (const topic of topics) {
-         await deleteFromCloudinary(topic.file, "video");
+        await deleteFromCloudinary(topic.file, "video");
         // console.log(result2);
     }
     await Topic.deleteMany({ courseId: courseId });
@@ -357,7 +357,10 @@ const deleteTopic = asyncHandler(async (req, res) => {
 
 
 const getAllCourses = asyncHandler(async (req, res) => {
-    let courses = await Course.find({}).populate({
+    const search = req.query.search || "";
+    let courses = await Course.find({
+        courseName: { $regex: search, $options: "i" }
+    }).populate({
         path: "owner",
         select: "name email"
     });
@@ -558,6 +561,13 @@ const updateCompletedCourses = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, {}, "Course successfully completed"));
 })
 
+//Search for courses by course name
+const searchCourses = asyncHandler(async (req, res) => {
+    const { search } = req.query;
+    const courses = await Course.find({ courseName: { $regex: search, $options: "i" } });
+    res.status(200).json(new ApiResponse(200, courses, "Courses found"));
+})
+
 const likeCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
@@ -585,5 +595,6 @@ module.exports = {
     updateCourse,
     markTopicAsCompleted,
     updateCompletedCourses,
-    likeCourse
+    likeCourse,
+    searchCourses
 }

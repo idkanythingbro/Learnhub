@@ -21,17 +21,19 @@ export const createNewCourse = async (courseData) => {
 
         toast.dismiss(tostId);
         toast.success("Course created successfully");
+        return response.data.success;
     } catch (error) {
         toast.dismiss(tostId);
+        return false;
 
     }
 
 };
 
-export const getAllCourses = () => async (dispatch) => {
+export const getAllCourses = (searchText="") => async (dispatch) => {
     try {
         dispatch(setCourseLoading(true));
-        const response = await axios.get(`${baseUrl}/courses`, {
+        const response = await axios.get(`${baseUrl}/courses/?search=${searchText}`, {
             withCredentials: true
         });
         dispatch(setCourseLoading(false));
@@ -271,3 +273,4 @@ export const deleteCourse =  (courseId)=>async(dispatch) => {
 
     }
 }
+

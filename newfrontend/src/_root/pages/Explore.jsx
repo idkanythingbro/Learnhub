@@ -6,16 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Explore = () => {
   const [courses, setCourses] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
   const [isCoursesLoading, setIsCoursesLoading] = useState(true);
   const coursesLoading = useSelector(
     (state) => state.courseReducer.courseLoading
   );
   const coursesData = useSelector((state) => state.courseReducer.courses);
-
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+    dispatch(getAllCourses(e.target.value));
+  }
   useEffect(() => {
     dispatch(getAllCourses());
-    // dispatch(getEnrolledCourses())
+    dispatch(getEnrolledCourses())
   }, []);
   useEffect(() => {
     setIsCoursesLoading(coursesLoading);
@@ -31,6 +35,17 @@ const Explore = () => {
           <h2 className="text-light-2 h3-bold md:h2-bold text-left w-full">
             Courses
           </h2>
+          <div className="w-full flex items-center justify-center gap-4">
+            <input
+              type="text"
+              placeholder="Search for courses"
+              className="w-[18rem] md:w-[30rem] h-12 px-4 rounded-lg bg-light-3 text-light-2 focus:outline-none"
+              value={searchText}
+              onChange={handleSearch}
+
+            />
+
+          </div>
           {isCoursesLoading && !courses ? (
             <Loader />
           ) : (
