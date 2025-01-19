@@ -249,3 +249,25 @@ export const likeCourse = async (courseId) => {
 
     }
 }
+
+export const deleteCourse =  (courseId)=>async(dispatch) => {
+    const tostId = toast.loading("Deleting ...");
+    try {
+        const response = await axios.delete(`${baseUrl}/courses/${courseId}`, {
+            withCredentials: true
+        });
+
+       if (response.data.success) {
+           dispatch(getCreatedCourses());
+           toast.dismiss(tostId);
+           toast.success("Course deleted successfully");
+        
+       }
+    } catch (error) {
+        toast.dismiss(tostId);
+        errorToast(error);
+        // console.log(error);
+        return false;
+
+    }
+}

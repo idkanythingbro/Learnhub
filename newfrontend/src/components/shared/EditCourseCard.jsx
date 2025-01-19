@@ -1,8 +1,26 @@
 /* eslint-disable react/prop-types */
+import { useDispatch } from "react-redux";
+import { deleteCourse } from "../../service/courses.service";
 import { timeAgo } from "../../utils/utils";
 import Button from "./Button";
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 const EditCourseCard = ({ course }) => {
+  const dispatch = useDispatch();
+  const handelCourseDelete = async () => {
+    const response = await Swal.fire({
+      title: "Are you sure you want to delete this course?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+    });
+
+    if (response.isConfirmed) {
+      // Delete course
+      // alert('Course Deleted')
+      dispatch(deleteCourse(course._id));
+    }
+  };
   return (
     <div className="bg-dark-2 rounded-3xl border border-dark-4 p-5 lg:p-7 w-full max-w-screen-sm">
       <div className="flex-between">
@@ -22,12 +40,19 @@ const EditCourseCard = ({ course }) => {
               {timeAgo(course.createdAt)}
             </p>
           </div>
-          <div className="flex-center">
+          <div className="flex-between">
             <Button
               title="Edit"
               id="edit"
               routepath={`/editprofile?courseId=${course._id}`}
             />
+            <button
+              title="Delete"
+              className=" text-white rounded-3xl px-4 py-2 border  border-red hover:bg-red"
+              onClick={handelCourseDelete}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>

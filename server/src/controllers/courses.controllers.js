@@ -231,16 +231,20 @@ const updateCourse = asyncHandler(async (req, res) => {
 const deleteCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
-    const course = await Course.findOne({ _id: courseId, ownerId: userId });
+    const course = await Course.findOne({ _id: courseId, owner: userId });
     if (!course) {
         res.status(404);
         throw new ApiError(404, "Course not found");
     }
     //NOTE - Delete image,videos and pdf from cloudinary
-    const result = await deleteFromCloudinary(course.coursePoster);
+    await deleteFromCloudinary(course.poster);
+    if (course.introVideo) {
+        await deleteFromCloudinary(course.introVideo, "video");
+        // console.log(result1);
+    }
     const topics = await Topic.find({ courseId: courseId });
     for (const topic of topics) {
-        const result2 = await deleteFromCloudinary(topic.contentFile);
+         await deleteFromCloudinary(topic.file, "video");
         // console.log(result2);
     }
     await Topic.deleteMany({ courseId: courseId });
@@ -366,13 +370,13 @@ const getAllCourses = asyncHandler(async (req, res) => {
             return { course, hasTopics: topics.length > 0 };
         })
     );
-    
-   courses= coursesWithTopics
+
+    courses = coursesWithTopics
         .filter(({ hasTopics }) => hasTopics)
         .map(({ course }) => course);
-    
+
     // console.log(filteredCourses);
-    
+
 
 
     // console.log(courses);
@@ -522,7 +526,7 @@ const markTopicAsCompleted = asyncHandler(async (req, res) => {
 const updateCompletedCourses = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     // console.log(courseId);
-    
+
     const userId = req.user._id;
     const userDetails = await UserDetails.findOne({ ownerId: userId });
     if (!userDetails) {
@@ -538,26 +542,26 @@ const updateCompletedCourses = asyncHandler(async (req, res) => {
     }
 
     // courseDetails.completedTopic
-    const topics = await Topic.find({ course: courseId })||[];
+    const topics = await Topic.find({ course: courseId }) || [];
     // console.log("Topics", topics);
     // console.log("Completed Topics", courseDetails.completedTopic);
-    
-    
-    if (topics.length>0 && topics?.length !== courseDetails.completedTopic?.length) {
+
+
+    if (topics.length > 0 && topics?.length !== courseDetails.completedTopic?.length) {
         throw new ApiError(400, "All topics are not completed");
     }
     // console.log("All topics are completed");
-    
+
     userDetails.completedCourses.push(courseId);
     await userDetails.save();
-    
+
     res.status(200).json(new ApiResponse(200, {}, "Course successfully completed"));
 })
 
 const likeCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user._id;
-   const course = await Course.findById(courseId);
+    const course = await Course.findById(courseId);
     if (!course) {
         throw new ApiError(404, "Course not found");
     }
